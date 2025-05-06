@@ -96,9 +96,9 @@ coverage>=7.2.5
   ~~Issue: The Sitting model uses comma-separated text fields to store question IDs and user answers.~~
   ~~Recommendation: Replace with proper relational models or use Django's JSONField, which would eliminate the need for string parsing and improve data integrity.~~
 
-2. Inefficient Database Queries
+2. ~~Inefficient Database Queries~~ ✅ Optimized with select_related and prefetch_related
 
-  Issue: In category_detail view, there's a loop with database queries
-  Recommendation: Use prefetch_related or select_related to reduce database hits
+  ~~Issue: In category_detail view, there's a loop with database queries~~
+  ~~Recommendation: Use prefetch_related or select_related to reduce database hits~~
 
 

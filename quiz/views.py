@@ -51,8 +51,45 @@ def category_list(request):
     
     # Get user progress for each category if user is authenticated
     if request.user.is_authenticated:
+        # Prefetch all quizzes and progress records to reduce database queries
+        quizzes_by_category = {}
+        all_quizzes = Quiz.objects.filter(draft=False).select_related('category')
+        
+        # Group quizzes by category
+        for quiz in all_quizzes:
+            if quiz.category_id not in quizzes_by_category:
+                quizzes_by_category[quiz.category_id] = []
+            quizzes_by_category[quiz.category_id].append(quiz)
+        
+        # Get all progress records for the current user in a single query
+        progress_records = Progress.objects.filter(
+            user=request.user,
+            quiz__draft=False
+        ).select_related('quiz')
+        
+        # Create a dictionary mapping quiz IDs to their progress records
+        progress_by_quiz = {p.quiz_id: p for p in progress_records}
+        
+        # Calculate progress for each category
         for category in categories:
-            category.progress = category.get_progress(request.user)
+            total_questions = 0
+            correct_answers = 0
+            
+            # Get quizzes for this category
+            category_quizzes = quizzes_by_category.get(category.id, [])
+            
+            # Calculate total progress across all quizzes in this category
+            for quiz in category_quizzes:
+                progress = progress_by_quiz.get(quiz.id)
+                if progress:
+                    total_questions += progress.total_questions
+                    correct_answers += progress.correct_answers
+            
+            # Calculate percentage
+            if total_questions > 0:
+                category.progress = int(correct_answers / total_questions * 100)
+            else:
+                category.progress = 0
     
     return render(request, 'quiz/category_list.html', {
         'categories': categories
@@ -65,9 +102,22 @@ def category_detail(request, category_id):
     
     # Get user progress for each quiz if user is authenticated
     if request.user.is_authenticated:
+        # Prefetch related progress records for the current user and these quizzes
+        # to avoid N+1 query problem
+        progress_dict = {}
+        progress_records = Progress.objects.filter(
+            user=request.user,
+            quiz__in=quizzes
+        ).select_related('quiz')
+        
+        # Create a dictionary mapping quiz IDs to their progress records
+        for progress in progress_records:
+            progress_dict[progress.quiz_id] = progress
+        
+        # Annotate quizzes with progress information
         for quiz in quizzes:
-            progress = Progress.objects.filter(user=request.user, quiz=quiz).first()
-            if progress:
+            if quiz.id in progress_dict:
+                progress = progress_dict[quiz.id]
                 quiz.user_progress = progress.get_percent_correct()
                 quiz.user_completed = True
             else:
@@ -237,7 +287,8 @@ def complete_quiz(request, sitting):
 @login_required
 def quiz_results(request, sitting_id):
     """View to show quiz results"""
-    sitting = get_object_or_404(Sitting, id=sitting_id)
+    # Use select_related to fetch the quiz in the same query
+    sitting = get_object_or_404(Sitting.objects.select_related('quiz', 'user'), id=sitting_id)
     
     # Check if user is authorized to view this sitting
     if sitting.user != request.user and not request.user.has_perm('quiz.view_sittings'):
@@ -245,11 +296,12 @@ def quiz_results(request, sitting_id):
         return redirect('quiz:quiz_list')
     
     quiz = sitting.quiz
-    questions = sitting.get_questions()
+    # Prefetch answers for all questions to reduce database queries
+    questions = list(sitting.get_questions().prefetch_related('answers'))
     user_answers = sitting.get_user_answers()
     
-    # Get essay answers
-    essay_answers = EssayAnswer.objects.filter(sitting=sitting)
+    # Get essay answers in a single query
+    essay_answers = EssayAnswer.objects.filter(sitting=sitting).select_related('question')
     
     # Calculate score
     score_percent = sitting.get_percent_correct()
@@ -268,23 +320,28 @@ def quiz_results(request, sitting_id):
 @login_required
 def progress_view(request):
     """View to show user progress across all quizzes"""
-    user_progress = Progress.objects.filter(user=request.user).order_by('-created_at')
+    # Use select_related to fetch quiz and category in a single query
+    user_progress = Progress.objects.filter(user=request.user).select_related(
+        'quiz', 'quiz__category'
+    ).order_by('-created_at')
     
-    # Group by category
+    # Group progress by category to avoid nested loops
+    progress_by_category = {}
+    for progress in user_progress:
+        category_id = progress.quiz.category_id
+        if category_id not in progress_by_category:
+            progress_by_category[category_id] = []
+        progress_by_category[category_id].append(progress)
+    
+    # Get all categories and annotate with progress data
     categories = Category.objects.all()
     for category in categories:
-        category.quizzes_taken = 0
-        category.quizzes_passed = 0
-        category.total_score = 0
-        category.total_questions = 0
+        category_progress = progress_by_category.get(category.id, [])
         
-        for progress in user_progress:
-            if progress.quiz.category == category:
-                category.quizzes_taken += 1
-                if progress.get_percent_correct() >= progress.quiz.pass_mark:
-                    category.quizzes_passed += 1
-                category.total_score += progress.correct_answers
-                category.total_questions += progress.total_questions
+        category.quizzes_taken = len(category_progress)
+        category.quizzes_passed = sum(1 for p in category_progress if p.get_percent_correct() >= p.quiz.pass_mark)
+        category.total_score = sum(p.correct_answers for p in category_progress)
+        category.total_questions = sum(p.total_questions for p in category_progress)
         
         if category.total_questions > 0:
             category.success_rate = int(category.total_score / category.total_questions * 100)

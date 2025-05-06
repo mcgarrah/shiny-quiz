@@ -4,6 +4,7 @@ from django.utils.text import slugify
 from django.urls import reverse
 from django.utils import timezone
 from django_ckeditor_5.fields import CKEditor5Field
+from django.db.models import JSONField
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -168,12 +169,12 @@ class Sitting(models.Model):
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='quiz_sittings')
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='sittings')
-    question_order = models.TextField(blank=True, default='')
-    question_list = models.TextField(blank=True, default='')
-    incorrect_questions = models.TextField(blank=True, default='')
+    question_order = JSONField(default=list)
+    question_list = JSONField(default=list)
+    incorrect_questions = JSONField(default=list)
     current_score = models.IntegerField(default=0)
     complete = models.BooleanField(default=False)
-    user_answers = models.TextField(blank=True, default='')
+    user_answers = JSONField(default=dict)
     start_time = models.DateTimeField(auto_now_add=True)
     end_time = models.DateTimeField(null=True, blank=True)
     
@@ -205,15 +206,18 @@ class Sitting(models.Model):
         """
         Adds a user answer to the sitting
         """
+        # Store the answer in the user_answers dictionary
         if answer:
-            self.user_answers += f"{question.id}:{answer.id},"
+            self.user_answers[str(question.id)] = answer.id
         else:
-            self.user_answers += f"{question.id}:,"
+            self.user_answers[str(question.id)] = None
         
+        # Update score and incorrect questions list
         if question.check_if_correct(answer) is True:
             self.current_score += 1
         else:
-            self.incorrect_questions += f"{question.id},"
+            if question.id not in self.incorrect_questions:
+                self.incorrect_questions.append(question.id)
         
         self.save()
     
@@ -221,45 +225,26 @@ class Sitting(models.Model):
         """
         Returns the total number of questions in this sitting
         """
-        if self.question_list:
-            return len(self.question_list.split(','))
-        return 0
+        return len(self.question_list)
     
     def get_questions(self):
         """
         Returns the list of questions for this sitting
         """
-        question_ids = self.question_list.split(',')
-        return Question.objects.filter(id__in=question_ids)
+        return Question.objects.filter(id__in=self.question_list)
     
     def get_incorrect_questions(self):
         """
         Returns the list of incorrect questions
         """
-        if not self.incorrect_questions:
-            return []
-        question_ids = self.incorrect_questions.split(',')
-        return Question.objects.filter(id__in=question_ids)
+        return Question.objects.filter(id__in=self.incorrect_questions)
     
     def get_user_answers(self):
         """
         Returns a dictionary of user answers
         """
-        if not self.user_answers:
-            return {}
-        
-        user_answers = {}
-        for answer in self.user_answers.split(','):
-            if not answer:
-                continue
-            
-            question_id, answer_id = answer.split(':')
-            if answer_id:
-                user_answers[int(question_id)] = int(answer_id)
-            else:
-                user_answers[int(question_id)] = None
-        
-        return user_answers
+        # Convert string keys to integers for consistency with previous implementation
+        return {int(k): v for k, v in self.user_answers.items()}
     
     def is_passed(self):
         """

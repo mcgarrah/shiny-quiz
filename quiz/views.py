@@ -125,28 +125,25 @@ def take_quiz(request, slug):
     if not sitting:
         # Get questions based on quiz settings
         questions = quiz.get_questions()
-        question_list = ','.join(str(q.id) for q in questions)
+        question_ids = [q.id for q in questions]
         
         # Create the sitting
         sitting = Sitting.objects.create(
             user=request.user,
             quiz=quiz,
-            question_list=question_list,
-            question_order=question_list
+            question_list=question_ids,
+            question_order=question_ids
         )
     
     # Get the current question
-    question_ids = sitting.question_list.split(',')
-    answered_ids = []
-    
-    if sitting.user_answers:
-        answered_ids = [int(a.split(':')[0]) for a in sitting.user_answers.split(',') if a]
+    question_ids = sitting.question_list
+    answered_ids = list(map(int, sitting.user_answers.keys())) if sitting.user_answers else []
     
     # Find the first unanswered question
     current_question = None
     for q_id in question_ids:
-        if q_id and int(q_id) not in answered_ids:
-            current_question = Question.objects.get(id=int(q_id))
+        if q_id not in answered_ids:
+            current_question = Question.objects.get(id=q_id)
             break
     
     # If all questions are answered, complete the quiz

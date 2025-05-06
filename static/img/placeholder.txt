@@ -1,0 +1,2 @@
+This is a placeholder file to ensure the img directory is created.
+Replace with actual images for your project.

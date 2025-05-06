@@ -1,0 +1,21 @@
+{% extends "allauth_ui/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Sign Out" %} - Shiny Quiz{% endblock %}
+
+{% block auth_header_title %}{% trans "Sign Out" %}{% endblock %}
+{% block auth_header_subtitle %}{% trans "Are you sure you want to sign out?" %}{% endblock %}
+
+{% block auth_content %}
+  <form method="post" action="{% url 'account_logout' %}">
+    {% csrf_token %}
+    {% if redirect_field_value %}
+      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+    {% endif %}
+    
+    <div class="d-grid gap-2 mt-4">
+      <button class="btn btn-primary" type="submit">{% trans "Sign Out" %}</button>
+      <a href="{% url 'home' %}" class="btn btn-outline-secondary {% if dark_mode %}text-light border-secondary{% endif %}">{% trans "Cancel" %}</a>
+    </div>
+  </form>
+{% endblock %}

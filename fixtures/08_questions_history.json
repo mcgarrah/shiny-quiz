@@ -1,0 +1,228 @@
+[
+  {
+    "model": "quiz.question",
+    "pk": 16,
+    "fields": {
+      "quiz": 4,
+      "question_type": "multiple_choice",
+      "text": "<p>When did World War II begin?</p>",
+      "explanation": "<p>World War II is generally considered to have begun on September 1, 1939, when Nazi Germany invaded Poland, leading Britain and France to declare war on Germany two days later.</p>",
+      "created_at": "2024-06-01T13:05:00Z",
+      "updated_at": "2024-06-01T13:05:00Z"
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 47,
+    "fields": {
+      "question": 16,
+      "text": "September 1, 1939",
+      "is_correct": true
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 48,
+    "fields": {
+      "question": 16,
+      "text": "December 7, 1941",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 49,
+    "fields": {
+      "question": 16,
+      "text": "June 28, 1914",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 50,
+    "fields": {
+      "question": 16,
+      "text": "August 6, 1945",
+      "is_correct": false
+    }
+  },
+  
+  {
+    "model": "quiz.question",
+    "pk": 17,
+    "fields": {
+      "quiz": 4,
+      "question_type": "multiple_choice",
+      "text": "<p>Who was the Prime Minister of the United Kingdom during most of World War II?</p>",
+      "explanation": "<p>Winston Churchill served as the Prime Minister of the United Kingdom from 1940 to 1945, leading Britain through most of World War II.</p>",
+      "created_at": "2024-06-01T13:10:00Z",
+      "updated_at": "2024-06-01T13:10:00Z"
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 51,
+    "fields": {
+      "question": 17,
+      "text": "Neville Chamberlain",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 52,
+    "fields": {
+      "question": 17,
+      "text": "Winston Churchill",
+      "is_correct": true
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 53,
+    "fields": {
+      "question": 17,
+      "text": "Clement Attlee",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 54,
+    "fields": {
+      "question": 17,
+      "text": "Anthony Eden",
+      "is_correct": false
+    }
+  },
+  
+  {
+    "model": "quiz.question",
+    "pk": 18,
+    "fields": {
+      "quiz": 4,
+      "question_type": "true_false",
+      "text": "<p>The United States entered World War II after the Japanese attack on Pearl Harbor.</p>",
+      "explanation": "<p>This is true. The United States officially entered World War II after the Japanese attack on Pearl Harbor on December 7, 1941, which President Franklin D. Roosevelt called \"a date which will live in infamy.\"</p>",
+      "created_at": "2024-06-01T13:15:00Z",
+      "updated_at": "2024-06-01T13:15:00Z"
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 55,
+    "fields": {
+      "question": 18,
+      "text": "True",
+      "is_correct": true
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 56,
+    "fields": {
+      "question": 18,
+      "text": "False",
+      "is_correct": false
+    }
+  },
+  
+  {
+    "model": "quiz.question",
+    "pk": 19,
+    "fields": {
+      "quiz": 4,
+      "question_type": "multiple_choice",
+      "text": "<p>What was the code name for the Allied invasion of Normandy on June 6, 1944?</p>",
+      "explanation": "<p>Operation Overlord was the code name for the Battle of Normandy, the Allied operation that launched the successful invasion of German-occupied Western Europe during World War II. The operation was launched on June 6, 1944, with the Normandy landings (D-Day).</p>",
+      "created_at": "2024-06-01T13:20:00Z",
+      "updated_at": "2024-06-01T13:20:00Z"
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 57,
+    "fields": {
+      "question": 19,
+      "text": "Operation Barbarossa",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 58,
+    "fields": {
+      "question": 19,
+      "text": "Operation Market Garden",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 59,
+    "fields": {
+      "question": 19,
+      "text": "Operation Overlord",
+      "is_correct": true
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 60,
+    "fields": {
+      "question": 19,
+      "text": "Operation Torch",
+      "is_correct": false
+    }
+  },
+  
+  {
+    "model": "quiz.question",
+    "pk": 20,
+    "fields": {
+      "quiz": 4,
+      "question_type": "multiple_choice",
+      "text": "<p>Which of the following countries was NOT part of the Axis powers during World War II?</p>",
+      "explanation": "<p>The Soviet Union was not part of the Axis powers. The main Axis powers were Nazi Germany, Italy, and Japan. The Soviet Union was part of the Allied powers, along with the United States, Great Britain, and France.</p>",
+      "created_at": "2024-06-01T13:25:00Z",
+      "updated_at": "2024-06-01T13:25:00Z"
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 61,
+    "fields": {
+      "question": 20,
+      "text": "Germany",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 62,
+    "fields": {
+      "question": 20,
+      "text": "Italy",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 63,
+    "fields": {
+      "question": 20,
+      "text": "Japan",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 64,
+    "fields": {
+      "question": 20,
+      "text": "Soviet Union",
+      "is_correct": true
+    }
+  }
+]

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}About - Shiny Quiz{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="mb-4">About Shiny Quiz</h1>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2>Our Mission</h2>
+                    <p>Shiny Quiz is dedicated to making learning fun and engaging through interactive quizzes. We believe that knowledge should be accessible to everyone, and our platform is designed to help users test and expand their understanding across various subjects.</p>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2>Our Story</h2>
+                    <p>Shiny Quiz was created as a modern, user-friendly alternative to traditional quiz platforms. Built with Django 5.2, our application leverages the latest web technologies to provide a seamless experience for quiz takers and creators alike.</p>
+                    
+                    <p>The project began as an exploration of Django's capabilities and has evolved into a full-featured quiz platform with social login integration, customizable themes, and a responsive design that works on any device.</p>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2>Features</h2>
+                    <ul>
+                        <li>Create and take quizzes on any topic</li>
+                        <li>Track your progress and performance</li>
+                        <li>Social media login integration</li>
+                        <li>Customizable light and dark themes</li>
+                        <li>Mobile-friendly responsive design</li>
+                        <li>Timed quiz options</li>
+                        <li>Detailed explanations for answers</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h2>Contact Us</h2>
+                    <p>Have questions or suggestions? We'd love to hear from you! Visit our <a href="{% url 'contact' %}">Contact page</a> to get in touch with our team.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

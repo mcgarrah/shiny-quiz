@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}My Progress - Shiny Quiz{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-3">My Quiz Progress</h1>
+            <p class="lead">Track your performance across all quizzes and categories.</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'quiz:quiz_list' %}" class="btn btn-outline-primary">
+                <i class="bi bi-grid-3x3-gap"></i> Browse Quizzes
+            </a>
+        </div>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Category Performance</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Quizzes Taken</th>
+                                    <th>Quizzes Passed</th>
+                                    <th>Success Rate</th>
+                                    <th>Progress</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for category in categories %}
+                                    {% if category.quizzes_taken > 0 %}
+                                        <tr>
+                                            <td>
+                                                <a href="{% url 'quiz:category_detail' category.id %}">
+                                                    {{ category.name }}
+                                                </a>
+                                            </td>
+                                            <td>{{ category.quizzes_taken }}</td>
+                                            <td>{{ category.quizzes_passed }}</td>
+                                            <td>{{ category.success_rate }}%</td>
+                                            <td>
+                                                <div class="progress" style="height: 10px;">
+                                                    <div class="progress-bar {% if category.success_rate >= 70 %}bg-success{% elif category.success_rate >= 40 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                                         role="progressbar" 
+                                                         style="width: {{ category.success_rate }}%;" 
+                                                         aria-valuenow="{{ category.success_rate }}" 
+                                                         aria-valuemin="0" 
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center">You haven't taken any quizzes yet.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Quiz History</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Quiz</th>
+                                    <th>Category</th>
+                                    <th>Date</th>
+                                    <th>Score</th>
+                                    <th>Result</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for progress in user_progress %}
+                                    <tr>
+                                        <td>{{ progress.quiz.title }}</td>
+                                        <td>{{ progress.quiz.category.name }}</td>
+                                        <td>{{ progress.created_at|date:"M d, Y" }}</td>
+                                        <td>{{ progress.get_percent_correct }}%</td>
+                                        <td>
+                                            {% if progress.get_percent_correct >= progress.quiz.pass_mark %}
+                                                <span class="badge bg-success">Passed</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Failed</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'quiz:quiz_detail' progress.quiz.slug %}" class="btn btn-sm btn-outline-primary">
+                                                View Quiz
+                                            </a>
+                                            {% if not progress.quiz.single_attempt %}
+                                                <a href="{% url 'quiz:take_quiz' progress.quiz.slug %}" class="btn btn-sm btn-outline-secondary">
+                                                    Retake
+                                                </a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center">You haven't taken any quizzes yet.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

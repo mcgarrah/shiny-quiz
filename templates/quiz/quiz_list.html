@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Quizzes - Shiny Quiz{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-3">Available Quizzes</h1>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'quiz:category_list' %}" class="btn btn-outline-primary">
+                <i class="bi bi-grid"></i> Browse by Category
+            </a>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form method="get" class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="Search quizzes..." 
+                       aria-label="Search" name="q" value="{{ search_query|default:'' }}">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <div class="d-flex justify-content-md-end mt-3 mt-md-0">
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" 
+                            id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% if selected_category %}
+                            {{ categories|dictsort:"id"|dictsortreversed:"id"|first }}
+                        {% else %}
+                            All Categories
+                        {% endif %}
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                        <li><a class="dropdown-item" href="{% url 'quiz:quiz_list' %}">All Categories</a></li>
+                        {% for category in categories %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'quiz:quiz_list' %}?category={{ category.id }}">
+                                    {{ category.name }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if page_obj %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for quiz in page_obj %}
+                <div class="col">
+                    <div class="card quiz-card h-100">
+                        <div class="card-header">
+                            <span class="badge bg-primary">{{ quiz.category.name }}</span>
+                            {% if quiz.time_limit > 0 %}
+                                <span class="badge bg-info float-end">
+                                    <i class="bi bi-clock"></i> {{ quiz.time_limit }} min
+                                </span>
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ quiz.title }}</h5>
+                            <p class="card-text">{{ quiz.description|striptags|truncatechars:100 }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">{{ quiz.question_count }} questions</small>
+                                {% if quiz.single_attempt %}
+                                    <small class="text-warning">
+                                        <i class="bi bi-exclamation-triangle"></i> One attempt only
+                                    </small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'quiz:quiz_detail' quiz.slug %}" class="btn btn-primary w-100">View Quiz</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center">
+                    <div class="alert alert-info">
+                        <p>No quizzes found. Please try a different search or category.</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if page_obj.paginator.num_pages > 1 %}
+            <nav aria-label="Quiz pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}" tabindex="-1">Previous</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}">Next</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" aria-disabled="true">Next</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="alert alert-info">
+            <p>No quizzes available yet. Check back soon!</p>
+        </div>
+    {% endif %}
+    
+    {% if user.is_authenticated %}
+        <div class="mt-5">
+            <h3>Your Progress</h3>
+            <div class="card">
+                <div class="card-body">
+                    <p>Track your quiz progress and see your scores.</p>
+                    <a href="{% url 'quiz:progress' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-graph-up"></i> View My Progress
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

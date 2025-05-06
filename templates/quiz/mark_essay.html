@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Mark Essay - Shiny Quiz{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2>Mark Essay Answer</h2>
+                </div>
+                
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5>Quiz: {{ essay_answer.sitting.quiz.title }}</h5>
+                        <p>User: {{ essay_answer.sitting.user.username }}</p>
+                        <p>Date: {{ essay_answer.sitting.end_time|date:"F j, Y, g:i a" }}</p>
+                    </div>
+                    
+                    <div class="question-text mb-4">
+                        <h4>Question:</h4>
+                        <div class="p-3 bg-light rounded">
+                            {{ essay_answer.question.text|safe }}
+                        </div>
+                    </div>
+                    
+                    <div class="model-answer mb-4">
+                        <h4>Model Answer:</h4>
+                        <div class="p-3 bg-light rounded">
+                            {% if essay_answer.question.essay_question.answer %}
+                                {{ essay_answer.question.essay_question.answer }}
+                            {% else %}
+                                <em>No model answer provided.</em>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="student-answer mb-4">
+                        <h4>Student's Answer:</h4>
+                        <div class="p-3 bg-light rounded">
+                            {{ essay_answer.answer|linebreaks }}
+                        </div>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Is this answer correct?</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="is_correct" id="correct" value="true" required>
+                                <label class="form-check-label" for="correct">
+                                    Correct
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="is_correct" id="incorrect" value="false">
+                                <label class="form-check-label" for="incorrect">
+                                    Incorrect
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="comments" class="form-label">Comments (optional):</label>
+                            <textarea class="form-control" id="comments" name="comments" rows="4"></textarea>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Submit Marking</button>
+                            <a href="{% url 'quiz:marking_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card auth-card my-5 {% if dark_mode %}bg-dark text-light border-secondary{% endif %}">
+                <div class="card-body p-4">
+                    <div class="auth-header">
+                        <h1>{% block auth_header_title %}Authentication{% endblock %}</h1>
+                        <p class="{% if dark_mode %}text-light{% else %}text-muted{% endif %}">{% block auth_header_subtitle %}{% endblock %}</p>
+                    </div>
+                    
+                    {% block auth_content %}{% endblock %}
+                    
+                    <div class="auth-footer {% if dark_mode %}text-light{% endif %}">
+                        {% block auth_footer %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

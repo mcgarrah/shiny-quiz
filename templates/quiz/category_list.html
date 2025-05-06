@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz Categories - Shiny Quiz{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-3">Quiz Categories</h1>
+            <p class="lead">Browse quizzes by category to find topics that interest you.</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'quiz:quiz_list' %}" class="btn btn-outline-primary">
+                <i class="bi bi-grid-3x3-gap"></i> View All Quizzes
+            </a>
+        </div>
+    </div>
+    
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for category in categories %}
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ category.name }}</h5>
+                        <p class="card-text">{{ category.description|truncatechars:100 }}</p>
+                        
+                        {% if user.is_authenticated and category.progress %}
+                            <div class="progress mb-3" style="height: 10px;">
+                                <div class="progress-bar" role="progressbar" style="width: {{ category.progress }}%;" 
+                                     aria-valuenow="{{ category.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <p class="small text-muted mb-3">Your progress: {{ category.progress }}%</p>
+                        {% endif %}
+                        
+                        <a href="{% url 'quiz:category_detail' category.id %}" class="btn btn-primary">Browse Quizzes</a>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">{{ category.get_quizzes.count }} quizzes available</small>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <p>No categories available yet. Check back soon!</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

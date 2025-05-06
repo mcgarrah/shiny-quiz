@@ -1,0 +1,56 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$720000$admin",
+      "last_login": "2024-06-01T12:00:00Z",
+      "is_superuser": true,
+      "username": "admin",
+      "first_name": "Admin",
+      "last_name": "User",
+      "email": "admin@example.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2024-06-01T12:00:00Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$720000$teacher",
+      "last_login": "2024-06-01T12:00:00Z",
+      "is_superuser": false,
+      "username": "teacher",
+      "first_name": "Teacher",
+      "last_name": "User",
+      "email": "teacher@example.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2024-06-01T12:00:00Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$720000$student",
+      "last_login": "2024-06-01T12:00:00Z",
+      "is_superuser": false,
+      "username": "student",
+      "first_name": "Student",
+      "last_name": "User",
+      "email": "student@example.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-06-01T12:00:00Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  }
+]

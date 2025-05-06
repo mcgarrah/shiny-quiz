@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Answer Feedback - {{ quiz.title }} - Shiny Quiz{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2>Answer Feedback</h2>
+                </div>
+                
+                <div class="card-body">
+                    <div class="question-text mb-4">
+                        <h4>Question:</h4>
+                        {{ question.text|safe }}
+                    </div>
+                    
+                    {% if question.question_type == 'essay' %}
+                        <div class="alert alert-info">
+                            <h5>Your Answer:</h5>
+                            <p>Your essay answer has been submitted and will be graded by an instructor.</p>
+                        </div>
+                    {% else %}
+                        <div class="your-answer mb-4">
+                            <h5>Your Answer:</h5>
+                            <div class="p-3 {% if answer.is_correct %}bg-success-subtle{% else %}bg-danger-subtle{% endif %} rounded">
+                                {{ answer.text }}
+                                {% if answer.is_correct %}
+                                    <i class="bi bi-check-circle-fill text-success ms-2"></i>
+                                {% else %}
+                                    <i class="bi bi-x-circle-fill text-danger ms-2"></i>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        {% if not answer.is_correct %}
+                            <div class="correct-answer mb-4">
+                                <h5>Correct Answer:</h5>
+                                <div class="p-3 bg-success-subtle rounded">
+                                    {{ question.correct_answer.text }}
+                                    <i class="bi bi-check-circle-fill text-success ms-2"></i>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                    
+                    {% if question.explanation %}
+                        <div class="explanation mt-4">
+                            <h5>Explanation:</h5>
+                            <div class="p-3 bg-light rounded">
+                                {{ question.explanation|safe }}
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2 mt-4">
+                        <a href="{% url 'quiz:take_quiz' quiz.slug %}" class="btn btn-primary">Continue to Next Question</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

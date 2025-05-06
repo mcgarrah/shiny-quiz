@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Taking: {{ quiz.title }} - Shiny Quiz{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">{{ quiz.title }}</h2>
+                    <span class="badge bg-primary">{{ quiz.category.name }}</span>
+                </div>
+                
+                <div class="card-body">
+                    {% if quiz.time_limit > 0 %}
+                        <div class="alert alert-info d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-clock"></i> Time Remaining:</span>
+                            <span id="quiz-timer" data-minutes="{{ remaining_minutes }}" data-seconds="{{ remaining_seconds }}" class="fw-bold">
+                                {{ remaining_minutes }}:{% if remaining_seconds < 10 %}0{% endif %}{{ remaining_seconds }}
+                            </span>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="progress mb-4">
+                        <div class="progress-bar" role="progressbar" 
+                             style="width: {{ answered_questions|default:0|floatformat:0 }}%;" 
+                             aria-valuenow="{{ answered_questions|default:0|floatformat:0 }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="{{ total_questions|default:100 }}">
+                            {{ answered_questions|default:0 }}/{{ total_questions|default:0 }}
+                        </div>
+                    </div>
+                    
+                    <div class="question-container">
+                        <h3>Question {{ answered_questions|add:"1" }} of {{ total_questions }}</h3>
+                        <div class="question-text mb-4">
+                            {{ question.text|safe }}
+                        </div>
+                        
+                        <form id="quiz-form" method="post">
+                            {% csrf_token %}
+                            
+                            {% if question.question_type == 'essay' %}
+                                <div class="mb-3">
+                                    <label for="essay_{{ question.id }}" class="form-label">Your Answer:</label>
+                                    <textarea class="form-control" id="essay_{{ question.id }}" name="essay_{{ question.id }}" rows="6" required></textarea>
+                                </div>
+                            {% elif question.question_type == 'true_false' %}
+                                <div class="answers mt-3">
+                                    {% for answer in question.get_answers %}
+                                        <div class="form-check answer-option p-3 mb-3 border rounded">
+                                            <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="answer_{{ answer.id }}" value="{{ answer.id }}" required>
+                                            <label class="form-check-label" for="answer_{{ answer.id }}">
+                                                {{ answer.text }}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="answers mt-3">
+                                    {% for answer in question.get_answers %}
+                                        <div class="form-check answer-option p-3 mb-3 border rounded">
+                                            <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="answer_{{ answer.id }}" value="{{ answer.id }}" required>
+                                            <label class="form-check-label" for="answer_{{ answer.id }}">
+                                                {{ answer.text }}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-primary">Submit Answer</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="card-footer text-muted">
+                    <div class="d-flex justify-content-between">
+                        <span>Quiz by: {{ quiz.created_by.username }}</span>
+                        <span>Category: {{ quiz.category.name }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Quiz timer functionality
+        const quizTimer = document.getElementById('quiz-timer');
+        if (quizTimer) {
+            const minutes = parseInt(quizTimer.dataset.minutes, 10);
+            const seconds = parseInt(quizTimer.dataset.seconds, 10);
+            
+            if (!isNaN(minutes) && !isNaN(seconds)) {
+                let timeLeft = (minutes * 60) + seconds;
+                
+                const timerInterval = setInterval(function() {
+                    timeLeft--;
+                    
+                    const mins = Math.floor(timeLeft / 60);
+                    const secs = timeLeft % 60;
+                    
+                    quizTimer.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        document.getElementById('quiz-form').submit();
+                    }
+                }, 1000);
+            }
+        }
+    });
+</script>
+{% endblock %}

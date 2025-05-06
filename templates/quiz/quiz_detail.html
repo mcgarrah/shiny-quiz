@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ quiz.title }} - Shiny Quiz{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h1 class="card-title">{{ quiz.title }}</h1>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-primary">{{ quiz.category.name }}</span>
+                        <small class="text-muted">Created by {{ quiz.created_by.username }}</small>
+                    </div>
+                    
+                    <div class="quiz-description mb-4">
+                        {{ quiz.description|safe }}
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h5>Quiz Details</h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Questions
+                                    <span class="badge bg-secondary rounded-pill">{{ quiz.question_count }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Time Limit
+                                    <span class="badge bg-secondary rounded-pill">
+                                        {% if quiz.time_limit %}
+                                            {{ quiz.time_limit }} minutes
+                                        {% else %}
+                                            No limit
+                                        {% endif %}
+                                    </span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Pass Mark
+                                    <span class="badge bg-secondary rounded-pill">{{ quiz.pass_mark }}%</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Random Order
+                                    <span class="badge {% if quiz.random_order %}bg-success{% else %}bg-secondary{% endif %} rounded-pill">
+                                        {% if quiz.random_order %}Yes{% else %}No{% endif %}
+                                    </span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Single Attempt
+                                    <span class="badge {% if quiz.single_attempt %}bg-warning{% else %}bg-secondary{% endif %} rounded-pill">
+                                        {% if quiz.single_attempt %}Yes{% else %}No{% endif %}
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Quiz Settings</h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Answers at End
+                                    <span class="badge {% if quiz.answers_at_end %}bg-success{% else %}bg-secondary{% endif %} rounded-pill">
+                                        {% if quiz.answers_at_end %}Yes{% else %}No{% endif %}
+                                    </span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Exam Paper
+                                    <span class="badge {% if quiz.exam_paper %}bg-success{% else %}bg-secondary{% endif %} rounded-pill">
+                                        {% if quiz.exam_paper %}Yes{% else %}No{% endif %}
+                                    </span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Created
+                                    <span class="badge bg-secondary rounded-pill">{{ quiz.created_at|date:"M d, Y" }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Last Updated
+                                    <span class="badge bg-secondary rounded-pill">{{ quiz.updated_at|date:"M d, Y" }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 mt-4">
+                        {% if user.is_authenticated %}
+                            {% if user_sitting %}
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle"></i> You have already completed this quiz.
+                                    <a href="{% url 'quiz:quiz_results' sitting_id=user_sitting.id %}" class="alert-link">View your results</a>.
+                                </div>
+                                {% if not quiz.single_attempt %}
+                                    <a href="{% url 'quiz:take_quiz' quiz.slug %}" class="btn btn-primary">Take Quiz Again</a>
+                                {% endif %}
+                            {% else %}
+                                <a href="{% url 'quiz:take_quiz' quiz.slug %}" class="btn btn-primary">Start Quiz</a>
+                            {% endif %}
+                        {% else %}
+                            <a href="{% url 'account_login' %}?next={% url 'quiz:take_quiz' quiz.slug %}" class="btn btn-primary">Login to Start Quiz</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h3>About This Quiz</h3>
+                    <p>This quiz contains {{ quiz.question_count }} questions designed to test your knowledge about {{ quiz.category.name }}.</p>
+                    
+                    {% if quiz.time_limit %}
+                        <div class="alert alert-info">
+                            <i class="bi bi-clock"></i> This quiz has a time limit of {{ quiz.time_limit }} minutes.
+                        </div>
+                    {% endif %}
+                    
+                    <p>To pass this quiz, you need to score at least {{ quiz.pass_mark }}%.</p>
+                    
+                    {% if quiz.single_attempt %}
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i> You can only attempt this quiz once.
+                        </div>
+                    {% endif %}
+                    
+                    {% if quiz.exam_paper %}
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> You will see the correct answer after each question.
+                        </div>
+                    {% endif %}
+                    
+                    {% if quiz.answers_at_end %}
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> You will see all answers at the end of the quiz.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

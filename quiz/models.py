@@ -1,0 +1,326 @@
+from django.db import models
+from django.contrib.auth.models import User
+from django.utils.text import slugify
+from django.urls import reverse
+from django.utils import timezone
+from django_ckeditor_5.fields import CKEditor5Field
+
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    
+    class Meta:
+        verbose_name_plural = "Categories"
+        ordering = ['name']
+    
+    def __str__(self):
+        return self.name
+    
+    def get_absolute_url(self):
+        return reverse('quiz:category_detail', args=[self.id])
+    
+    @property
+    def get_quizzes(self):
+        return Quiz.objects.filter(category=self, draft=False)
+    
+    def get_progress(self, user):
+        """
+        Returns user progress for a specific category
+        """
+        if not user.is_authenticated:
+            return None
+        
+        total = 0
+        correct = 0
+        
+        for quiz in self.get_quizzes:
+            progress = Progress.objects.filter(user=user, quiz=quiz).first()
+            if progress:
+                total += progress.total_questions
+                correct += progress.correct_answers
+        
+        if total > 0:
+            return int(correct / total * 100)
+        return 0
+
+class Quiz(models.Model):
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
+    description = CKEditor5Field(blank=True, config_name='extends')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='quizzes')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_quizzes')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    # Quiz settings
+    random_order = models.BooleanField(default=False, help_text="Display questions in random order")
+    max_questions = models.IntegerField(default=0, help_text="0 = All questions")
+    answers_at_end = models.BooleanField(default=False, help_text="Show all answers at the end")
+    exam_paper = models.BooleanField(default=False, help_text="If yes, answers show after each question")
+    single_attempt = models.BooleanField(default=False, help_text="If yes, only one attempt is allowed")
+    pass_mark = models.FloatField(default=50, help_text="Percentage required to pass")
+    success_text = CKEditor5Field(blank=True, config_name='default', help_text="Displayed if user passes")
+    fail_text = CKEditor5Field(blank=True, config_name='default', help_text="Displayed if user fails")
+    draft = models.BooleanField(default=False, help_text="If yes, quiz is not displayed in the quiz list")
+    time_limit = models.IntegerField(default=0, help_text="Time limit in minutes (0 = no limit)")
+    
+    class Meta:
+        verbose_name_plural = "Quizzes"
+        ordering = ['-created_at']
+        permissions = [
+            ("view_sittings", "Can view quiz results from users"),
+        ]
+    
+    def __str__(self):
+        return self.title
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+    
+    def get_absolute_url(self):
+        return reverse('quiz:quiz_detail', args=[self.slug])
+    
+    @property
+    def question_count(self):
+        return self.questions.count()
+    
+    def get_questions(self):
+        """
+        Returns questions based on quiz settings
+        """
+        questions = self.questions.all()
+        if self.random_order:
+            questions = questions.order_by('?')
+        if self.max_questions > 0:
+            questions = questions[:self.max_questions]
+        return questions
+
+class Question(models.Model):
+    """
+    Base class for all question types
+    """
+    QUESTION_TYPE_CHOICES = (
+        ('multiple_choice', 'Multiple Choice'),
+        ('true_false', 'True/False'),
+        ('essay', 'Essay'),
+    )
+    
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='questions')
+    question_type = models.CharField(max_length=20, choices=QUESTION_TYPE_CHOICES, default='multiple_choice')
+    text = CKEditor5Field(config_name='extends')
+    explanation = CKEditor5Field(blank=True, config_name='default', help_text="Explanation shown after question is answered")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['created_at']
+    
+    def __str__(self):
+        return self.text[:50]
+    
+    @property
+    def correct_answer(self):
+        """
+        Returns the correct answer for this question
+        """
+        if self.question_type == 'multiple_choice':
+            return self.answers.filter(is_correct=True).first()
+        elif self.question_type == 'true_false':
+            return self.answers.filter(is_correct=True).first()
+        return None
+    
+    @property
+    def get_answers(self):
+        """
+        Returns answers based on question type
+        """
+        if self.question_type in ['multiple_choice', 'true_false']:
+            return self.answers.all()
+        return None
+    
+    def check_if_correct(self, selected_answer):
+        """
+        Checks if the selected answer is correct
+        """
+        if self.question_type == 'essay':
+            return None  # Essay questions need manual grading
+        
+        if selected_answer:
+            return selected_answer.is_correct
+        return False
+
+class Answer(models.Model):
+    """
+    Answer model for multiple choice and true/false questions
+    """
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
+    text = models.CharField(max_length=255)
+    is_correct = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f"{self.text} ({'Correct' if self.is_correct else 'Incorrect'})"
+
+class Sitting(models.Model):
+    """
+    Records a user's progress through a quiz
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='quiz_sittings')
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='sittings')
+    question_order = models.TextField(blank=True, default='')
+    question_list = models.TextField(blank=True, default='')
+    incorrect_questions = models.TextField(blank=True, default='')
+    current_score = models.IntegerField(default=0)
+    complete = models.BooleanField(default=False)
+    user_answers = models.TextField(blank=True, default='')
+    start_time = models.DateTimeField(auto_now_add=True)
+    end_time = models.DateTimeField(null=True, blank=True)
+    
+    class Meta:
+        permissions = [
+            ("view_sittings", "Can view quiz results from users"),
+        ]
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.quiz.title}"
+    
+    def get_percent_correct(self):
+        """
+        Returns the percentage of correct answers
+        """
+        if self.current_score > 0:
+            return int(self.current_score / self.get_total_questions() * 100)
+        return 0
+    
+    def mark_quiz_complete(self):
+        """
+        Marks the quiz as complete and sets the end time
+        """
+        self.complete = True
+        self.end_time = timezone.now()
+        self.save()
+    
+    def add_user_answer(self, question, answer=None):
+        """
+        Adds a user answer to the sitting
+        """
+        if answer:
+            self.user_answers += f"{question.id}:{answer.id},"
+        else:
+            self.user_answers += f"{question.id}:,"
+        
+        if question.check_if_correct(answer) is True:
+            self.current_score += 1
+        else:
+            self.incorrect_questions += f"{question.id},"
+        
+        self.save()
+    
+    def get_total_questions(self):
+        """
+        Returns the total number of questions in this sitting
+        """
+        if self.question_list:
+            return len(self.question_list.split(','))
+        return 0
+    
+    def get_questions(self):
+        """
+        Returns the list of questions for this sitting
+        """
+        question_ids = self.question_list.split(',')
+        return Question.objects.filter(id__in=question_ids)
+    
+    def get_incorrect_questions(self):
+        """
+        Returns the list of incorrect questions
+        """
+        if not self.incorrect_questions:
+            return []
+        question_ids = self.incorrect_questions.split(',')
+        return Question.objects.filter(id__in=question_ids)
+    
+    def get_user_answers(self):
+        """
+        Returns a dictionary of user answers
+        """
+        if not self.user_answers:
+            return {}
+        
+        user_answers = {}
+        for answer in self.user_answers.split(','):
+            if not answer:
+                continue
+            
+            question_id, answer_id = answer.split(':')
+            if answer_id:
+                user_answers[int(question_id)] = int(answer_id)
+            else:
+                user_answers[int(question_id)] = None
+        
+        return user_answers
+    
+    def is_passed(self):
+        """
+        Returns True if the user has passed the quiz
+        """
+        return self.get_percent_correct() >= self.quiz.pass_mark
+
+class Progress(models.Model):
+    """
+    Tracks user progress across quizzes and categories
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='quiz_progress')
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='progress')
+    score = models.IntegerField(default=0)
+    total_questions = models.IntegerField(default=0)
+    correct_answers = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name_plural = "Progress Records"
+        unique_together = ['user', 'quiz']
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.quiz.title}"
+    
+    def update_score(self, score, total, correct):
+        """
+        Updates the user's score for this quiz
+        """
+        self.score = score
+        self.total_questions = total
+        self.correct_answers = correct
+        self.save()
+    
+    def get_percent_correct(self):
+        """
+        Returns the percentage of correct answers
+        """
+        if self.total_questions > 0:
+            return int(self.correct_answers / self.total_questions * 100)
+        return 0
+
+class EssayQuestion(models.Model):
+    """
+    Model for essay questions that need manual grading
+    """
+    question = models.OneToOneField(Question, on_delete=models.CASCADE, related_name='essay_question')
+    answer = models.TextField(blank=True, help_text="Model answer for this essay question")
+    
+    def __str__(self):
+        return self.question.text[:50]
+
+class EssayAnswer(models.Model):
+    """
+    Model for storing user's essay answers
+    """
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='essay_answers')
+    sitting = models.ForeignKey(Sitting, on_delete=models.CASCADE, related_name='essay_answers')
+    answer = models.TextField(blank=True)
+    is_correct = models.BooleanField(null=True, blank=True)
+    comments = models.TextField(blank=True)
+    
+    def __str__(self):
+        return f"{self.sitting.user.username} - {self.question.text[:30]}"

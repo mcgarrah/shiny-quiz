@@ -1,0 +1,97 @@
+{% extends "allauth_ui/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Email Addresses" %} - Shiny Quiz{% endblock %}
+
+{% block auth_header_title %}{% trans "Email Addresses" %}{% endblock %}
+{% block auth_header_subtitle %}{% trans "Manage your email addresses." %}{% endblock %}
+
+{% block auth_content %}
+  {% if user.emailaddress_set.all %}
+    <p>{% trans 'The following email addresses are associated with your account:' %}</p>
+    
+    <form action="{% url 'account_email' %}" method="post">
+      {% csrf_token %}
+      
+      <div class="list-group mb-4">
+        {% for emailaddress in user.emailaddress_set.all %}
+          <div class="list-group-item d-flex justify-content-between align-items-center">
+            <div class="form-check">
+              <input id="email_radio_{{ forloop.counter }}" type="radio" name="email" 
+                     value="{{ emailaddress.email }}" class="form-check-input"
+                     {% if emailaddress.primary or user.emailaddress_set.count == 1 %}checked="checked"{% endif %}>
+              <label for="email_radio_{{ forloop.counter }}" class="form-check-label">
+                {{ emailaddress.email }}
+              </label>
+            </div>
+            <div>
+              {% if emailaddress.verified %}
+                <span class="badge bg-success">{% trans "Verified" %}</span>
+              {% else %}
+                <span class="badge bg-warning text-dark">{% trans "Unverified" %}</span>
+              {% endif %}
+              {% if emailaddress.primary %}<span class="badge bg-primary">{% trans "Primary" %}</span>{% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      
+      <div class="btn-group w-100 mb-4">
+        <button class="btn btn-outline-primary" type="submit" name="action_primary">{% trans 'Make Primary' %}</button>
+        <button class="btn btn-outline-primary" type="submit" name="action_send">{% trans 'Re-send Verification' %}</button>
+        <button class="btn btn-outline-danger" type="submit" name="action_remove">{% trans 'Remove' %}</button>
+      </div>
+    </form>
+  {% else %}
+    <p>{% trans 'You currently do not have any email address set up. You should add an email address so you can receive notifications, reset your password, etc.' %}</p>
+  {% endif %}
+  
+  <h3 class="mt-5 mb-3">{% trans "Add Email Address" %}</h3>
+  
+  <form method="post" action="{% url 'account_email' %}">
+    {% csrf_token %}
+    
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {% for error in form.non_field_errors %}
+          {{ error }}
+        {% endfor %}
+      </div>
+    {% endif %}
+    
+    <div class="mb-3">
+      <label for="id_email" class="form-label">{% trans "Email" %}</label>
+      <input type="email" name="email" placeholder="{% trans 'Email' %}" 
+             class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+             id="id_email" required>
+      {% if form.email.errors %}
+        <div class="invalid-feedback">
+          {% for error in form.email.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+    
+    <div class="d-grid gap-2">
+      <button class="btn btn-primary" name="action_add" type="submit">{% trans "Add Email" %}</button>
+    </div>
+  </form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const message = "{% trans 'Do you really want to remove the selected email address?' %}";
+    const removeButtons = document.querySelectorAll("button[name='action_remove']");
+    
+    removeButtons.forEach(function(button) {
+      button.addEventListener('click', function(e) {
+        if (!confirm(message)) {
+          e.preventDefault();
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}

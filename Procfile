@@ -1,0 +1,1 @@
+web: gunicorn shiny_quiz.wsgi:application --log-file -

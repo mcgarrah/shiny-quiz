@@ -1,0 +1,42 @@
+[
+  {
+    "model": "quiz.category",
+    "pk": 1,
+    "fields": {
+      "name": "Programming",
+      "description": "Quizzes related to programming languages, concepts, and best practices."
+    }
+  },
+  {
+    "model": "quiz.category",
+    "pk": 2,
+    "fields": {
+      "name": "Science",
+      "description": "Quizzes covering various scientific disciplines including physics, chemistry, and biology."
+    }
+  },
+  {
+    "model": "quiz.category",
+    "pk": 3,
+    "fields": {
+      "name": "Mathematics",
+      "description": "Quizzes on mathematical concepts, formulas, and problem-solving."
+    }
+  },
+  {
+    "model": "quiz.category",
+    "pk": 4,
+    "fields": {
+      "name": "History",
+      "description": "Quizzes about historical events, figures, and periods from around the world."
+    }
+  },
+  {
+    "model": "quiz.category",
+    "pk": 5,
+    "fields": {
+      "name": "General Knowledge",
+      "description": "Quizzes covering a wide range of topics and trivia."
+    }
+  }
+]

@@ -1,0 +1,18 @@
+{% extends "allauth_ui/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Login Cancelled" %} - Shiny Quiz{% endblock %}
+
+{% block auth_header_title %}{% trans "Login Cancelled" %}{% endblock %}
+{% block auth_header_subtitle %}{% trans "You decided to cancel logging in to our site using one of your existing accounts." %}{% endblock %}
+
+{% block auth_content %}
+  <div class="text-center">
+    <i class="bi bi-x-circle display-1 text-danger mb-3"></i>
+    <p class="mb-4">{% trans "If this was a mistake, please proceed to sign in again." %}</p>
+    <div class="d-grid gap-2 mt-4">
+      <a href="{% url 'account_login' %}" class="btn btn-primary">{% trans "Sign In" %}</a>
+      <a href="{% url 'account_signup' %}" class="btn btn-outline-primary">{% trans "Sign Up" %}</a>
+    </div>
+  </div>
+{% endblock %}

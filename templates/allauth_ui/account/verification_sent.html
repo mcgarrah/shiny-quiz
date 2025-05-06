@@ -1,0 +1,17 @@
+{% extends "allauth_ui/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Verify Your Email" %} - Shiny Quiz{% endblock %}
+
+{% block auth_header_title %}{% trans "Verify Your Email" %}{% endblock %}
+{% block auth_header_subtitle %}{% trans "We have sent an email to verify your email address. Please check your inbox and click on the link to complete the verification process." %}{% endblock %}
+
+{% block auth_content %}
+  <div class="text-center">
+    <i class="bi bi-envelope-check display-1 text-primary mb-3"></i>
+    <p class="mb-4">{% trans "If you don't receive an email within a few minutes, please check your spam folder or make sure you entered the correct email address." %}</p>
+    <div class="d-grid gap-2 mt-4">
+      <a href="{% url 'account_login' %}" class="btn btn-outline-primary">{% trans "Back to login" %}</a>
+    </div>
+  </div>
+{% endblock %}

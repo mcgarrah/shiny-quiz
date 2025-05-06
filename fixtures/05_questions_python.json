@@ -1,0 +1,200 @@
+[
+  {
+    "model": "quiz.question",
+    "pk": 1,
+    "fields": {
+      "quiz": 1,
+      "question_type": "multiple_choice",
+      "text": "<p>What is the output of the following code?</p><pre><code>x = 5\ny = 2\nprint(x // y)</code></pre>",
+      "explanation": "<p>The // operator performs integer division (floor division), which divides and rounds down to the nearest integer. So 5 // 2 equals 2.</p>",
+      "created_at": "2024-06-01T10:05:00Z",
+      "updated_at": "2024-06-01T10:05:00Z"
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 1,
+    "fields": {
+      "question": 1,
+      "text": "2",
+      "is_correct": true
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 2,
+    "fields": {
+      "question": 1,
+      "text": "2.5",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 3,
+    "fields": {
+      "question": 1,
+      "text": "2.0",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 4,
+    "fields": {
+      "question": 1,
+      "text": "3",
+      "is_correct": false
+    }
+  },
+  
+  {
+    "model": "quiz.question",
+    "pk": 2,
+    "fields": {
+      "quiz": 1,
+      "question_type": "multiple_choice",
+      "text": "<p>Which of the following is a mutable data type in Python?</p>",
+      "explanation": "<p>Lists are mutable, which means they can be changed after creation. Strings, tuples, and integers are immutable in Python.</p>",
+      "created_at": "2024-06-01T10:10:00Z",
+      "updated_at": "2024-06-01T10:10:00Z"
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 5,
+    "fields": {
+      "question": 2,
+      "text": "String",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 6,
+    "fields": {
+      "question": 2,
+      "text": "Tuple",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 7,
+    "fields": {
+      "question": 2,
+      "text": "List",
+      "is_correct": true
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 8,
+    "fields": {
+      "question": 2,
+      "text": "Integer",
+      "is_correct": false
+    }
+  },
+  
+  {
+    "model": "quiz.question",
+    "pk": 3,
+    "fields": {
+      "quiz": 1,
+      "question_type": "true_false",
+      "text": "<p>In Python, indentation is used to define code blocks.</p>",
+      "explanation": "<p>Python uses indentation (whitespace at the beginning of a line) to define scope in the code. Other languages often use braces {}.</p>",
+      "created_at": "2024-06-01T10:15:00Z",
+      "updated_at": "2024-06-01T10:15:00Z"
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 9,
+    "fields": {
+      "question": 3,
+      "text": "True",
+      "is_correct": true
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 10,
+    "fields": {
+      "question": 3,
+      "text": "False",
+      "is_correct": false
+    }
+  },
+  
+  {
+    "model": "quiz.question",
+    "pk": 4,
+    "fields": {
+      "quiz": 1,
+      "question_type": "multiple_choice",
+      "text": "<p>What does the <code>len()</code> function do in Python?</p>",
+      "explanation": "<p>The <code>len()</code> function returns the number of items in an object. When the object is a string, it returns the number of characters in the string.</p>",
+      "created_at": "2024-06-01T10:20:00Z",
+      "updated_at": "2024-06-01T10:20:00Z"
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 11,
+    "fields": {
+      "question": 4,
+      "text": "Returns the length of a string or collection",
+      "is_correct": true
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 12,
+    "fields": {
+      "question": 4,
+      "text": "Returns the largest number in a list",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 13,
+    "fields": {
+      "question": 4,
+      "text": "Converts a number to a string",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 14,
+    "fields": {
+      "question": 4,
+      "text": "Calculates the square root of a number",
+      "is_correct": false
+    }
+  },
+  
+  {
+    "model": "quiz.question",
+    "pk": 5,
+    "fields": {
+      "quiz": 1,
+      "question_type": "essay",
+      "text": "<p>Explain the difference between a list and a tuple in Python, and provide an example of when you would use each.</p>",
+      "explanation": "<p>Lists are mutable (can be changed) while tuples are immutable (cannot be changed after creation). Lists are typically used when you need a collection that might change, while tuples are used for collections that should remain constant.</p>",
+      "created_at": "2024-06-01T10:25:00Z",
+      "updated_at": "2024-06-01T10:25:00Z"
+    }
+  },
+  {
+    "model": "quiz.essayquestion",
+    "pk": 1,
+    "fields": {
+      "question": 5,
+      "answer": "Lists are mutable data structures, meaning they can be modified after creation (items can be added, removed, or changed). Tuples are immutable, meaning once created, their elements cannot be changed.\n\nExample of a list: my_list = [1, 2, 3, 4]\nExample of a tuple: my_tuple = (1, 2, 3, 4)\n\nYou would use a list when you need a collection that might change during program execution, such as a shopping cart or a list of active users.\n\nYou would use a tuple when you need a collection that should not change, such as coordinates (x, y) or RGB color values. Tuples can also be used as dictionary keys because they're immutable, while lists cannot."
+    }
+  }
+]

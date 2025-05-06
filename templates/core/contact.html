@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block title %}Contact Us - Shiny Quiz{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="mb-4">Contact Us</h1>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2>Get in Touch</h2>
+                    <p>Have questions, suggestions, or feedback? We'd love to hear from you! Fill out the form below and we'll get back to you as soon as possible.</p>
+                    
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" id="subject" name="subject" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        
+                        {% bootstrap_button "Send Message" button_type="submit" button_class="btn-primary" %}
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h2>Other Ways to Connect</h2>
+                    <div class="row mt-4">
+                        <div class="col-md-4 text-center mb-3">
+                            <i class="bi bi-envelope display-6 text-primary"></i>
+                            <h5 class="mt-2">Email</h5>
+                            <p>info@shinyquiz.example</p>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <i class="bi bi-telephone display-6 text-primary"></i>
+                            <h5 class="mt-2">Phone</h5>
+                            <p>+1 (555) 123-4567</p>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <i class="bi bi-geo-alt display-6 text-primary"></i>
+                            <h5 class="mt-2">Address</h5>
+                            <p>123 Quiz Street<br>Knowledge City, KN 12345</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

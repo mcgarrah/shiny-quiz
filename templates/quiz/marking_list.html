@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}Marking List - Shiny Quiz{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-3">Quiz Marking</h1>
+            <p class="lead">Review and mark essay questions from completed quizzes.</p>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-5">
+                            <label for="quiz" class="form-label">Filter by Quiz</label>
+                            <select class="form-select" id="quiz" name="quiz">
+                                <option value="">All Quizzes</option>
+                                {% for quiz in quizzes %}
+                                    <option value="{{ quiz.id }}" {% if selected_quiz == quiz.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ quiz.title }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label for="user" class="form-label">Filter by User</label>
+                            <select class="form-select" id="user" name="user">
+                                <option value="">All Users</option>
+                                {% for user in users %}
+                                    <option value="{{ user.id }}" {% if selected_user == user.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ user.username }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">Filter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Quizzes Requiring Marking</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Quiz</th>
+                                    <th>User</th>
+                                    <th>Date Completed</th>
+                                    <th>Current Score</th>
+                                    <th>Essay Questions</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sitting in page_obj %}
+                                    <tr>
+                                        <td>{{ sitting.quiz.title }}</td>
+                                        <td>{{ sitting.user.username }}</td>
+                                        <td>{{ sitting.end_time|date:"M d, Y H:i" }}</td>
+                                        <td>{{ sitting.current_score }} / {{ sitting.get_total_questions }}</td>
+                                        <td>
+                                            {% load quiz_tags %}
+                                            {% with essay_count=sitting.essay_answers.count %}
+                                                {{ essay_count }} question{{ essay_count|pluralize }}
+                                                ({{ sitting.essay_answers.all|count_marked_essays }} marked)
+                                            {% endwith %}
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'quiz:quiz_results' sitting_id=sitting.id %}" class="btn btn-sm btn-outline-primary">
+                                                View Results
+                                            </a>
+                                            {% with unmarked_essay=sitting.essay_answers.all|first_unmarked_essay %}
+                                                {% if unmarked_essay %}
+                                                    <a href="{% url 'quiz:mark_essay' essay_answer_id=unmarked_essay.id %}" class="btn btn-sm btn-primary">
+                                                        Mark Essay
+                                                    </a>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center">No quizzes requiring marking found.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pagination -->
+    {% if page_obj.paginator.num_pages > 1 %}
+        <nav aria-label="Marking pagination" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if selected_quiz %}&quiz={{ selected_quiz }}{% endif %}{% if selected_user %}&user={{ selected_user }}{% endif %}" tabindex="-1">Previous</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                    </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% if selected_quiz %}&quiz={{ selected_quiz }}{% endif %}{% if selected_user %}&user={{ selected_user }}{% endif %}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if selected_quiz %}&quiz={{ selected_quiz }}{% endif %}{% if selected_user %}&user={{ selected_user }}{% endif %}">Next</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-disabled="true">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,228 @@
+[
+  {
+    "model": "quiz.question",
+    "pk": 21,
+    "fields": {
+      "quiz": 5,
+      "question_type": "multiple_choice",
+      "text": "<p>Which planet is known as the Red Planet?</p>",
+      "explanation": "<p>Mars is known as the Red Planet due to the reddish appearance it has, which is caused by iron oxide (rust) on its surface.</p>",
+      "created_at": "2024-06-01T14:05:00Z",
+      "updated_at": "2024-06-01T14:05:00Z"
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 65,
+    "fields": {
+      "question": 21,
+      "text": "Venus",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 66,
+    "fields": {
+      "question": 21,
+      "text": "Mars",
+      "is_correct": true
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 67,
+    "fields": {
+      "question": 21,
+      "text": "Jupiter",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 68,
+    "fields": {
+      "question": 21,
+      "text": "Mercury",
+      "is_correct": false
+    }
+  },
+  
+  {
+    "model": "quiz.question",
+    "pk": 22,
+    "fields": {
+      "quiz": 5,
+      "question_type": "multiple_choice",
+      "text": "<p>Who wrote the play \"Romeo and Juliet\"?</p>",
+      "explanation": "<p>\"Romeo and Juliet\" was written by William Shakespeare, an English playwright, poet, and actor widely regarded as the greatest writer in the English language.</p>",
+      "created_at": "2024-06-01T14:10:00Z",
+      "updated_at": "2024-06-01T14:10:00Z"
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 69,
+    "fields": {
+      "question": 22,
+      "text": "Charles Dickens",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 70,
+    "fields": {
+      "question": 22,
+      "text": "William Shakespeare",
+      "is_correct": true
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 71,
+    "fields": {
+      "question": 22,
+      "text": "Jane Austen",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 72,
+    "fields": {
+      "question": 22,
+      "text": "Mark Twain",
+      "is_correct": false
+    }
+  },
+  
+  {
+    "model": "quiz.question",
+    "pk": 23,
+    "fields": {
+      "quiz": 5,
+      "question_type": "true_false",
+      "text": "<p>The Great Wall of China is visible from space with the naked eye.</p>",
+      "explanation": "<p>This is false. Contrary to popular belief, the Great Wall of China is not visible from space with the naked eye. It can be seen from low Earth orbit under perfect conditions, but not from the Moon or further away.</p>",
+      "created_at": "2024-06-01T14:15:00Z",
+      "updated_at": "2024-06-01T14:15:00Z"
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 73,
+    "fields": {
+      "question": 23,
+      "text": "True",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 74,
+    "fields": {
+      "question": 23,
+      "text": "False",
+      "is_correct": true
+    }
+  },
+  
+  {
+    "model": "quiz.question",
+    "pk": 24,
+    "fields": {
+      "quiz": 5,
+      "question_type": "multiple_choice",
+      "text": "<p>What is the chemical symbol for gold?</p>",
+      "explanation": "<p>The chemical symbol for gold is Au, which comes from the Latin word for gold, \"aurum.\"</p>",
+      "created_at": "2024-06-01T14:20:00Z",
+      "updated_at": "2024-06-01T14:20:00Z"
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 75,
+    "fields": {
+      "question": 24,
+      "text": "Go",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 76,
+    "fields": {
+      "question": 24,
+      "text": "Gd",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 77,
+    "fields": {
+      "question": 24,
+      "text": "Au",
+      "is_correct": true
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 78,
+    "fields": {
+      "question": 24,
+      "text": "Ag",
+      "is_correct": false
+    }
+  },
+  
+  {
+    "model": "quiz.question",
+    "pk": 25,
+    "fields": {
+      "quiz": 5,
+      "question_type": "multiple_choice",
+      "text": "<p>Which country is home to the kangaroo?</p>",
+      "explanation": "<p>Kangaroos are native to Australia. They are marsupials found in Australia and New Guinea.</p>",
+      "created_at": "2024-06-01T14:25:00Z",
+      "updated_at": "2024-06-01T14:25:00Z"
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 79,
+    "fields": {
+      "question": 25,
+      "text": "New Zealand",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 80,
+    "fields": {
+      "question": 25,
+      "text": "South Africa",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 81,
+    "fields": {
+      "question": 25,
+      "text": "Australia",
+      "is_correct": true
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 82,
+    "fields": {
+      "question": 25,
+      "text": "Brazil",
+      "is_correct": false
+    }
+  }
+]

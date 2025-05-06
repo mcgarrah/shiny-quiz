@@ -1,0 +1,200 @@
+[
+  {
+    "model": "quiz.question",
+    "pk": 11,
+    "fields": {
+      "quiz": 3,
+      "question_type": "multiple_choice",
+      "text": "<p>Solve for x: 3x + 5 = 14</p>",
+      "explanation": "<p>To solve for x, we need to isolate it by first subtracting 5 from both sides: 3x = 9. Then divide both sides by 3: x = 3.</p>",
+      "created_at": "2024-06-01T12:05:00Z",
+      "updated_at": "2024-06-01T12:05:00Z"
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 33,
+    "fields": {
+      "question": 11,
+      "text": "x = 2",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 34,
+    "fields": {
+      "question": 11,
+      "text": "x = 3",
+      "is_correct": true
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 35,
+    "fields": {
+      "question": 11,
+      "text": "x = 4",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 36,
+    "fields": {
+      "question": 11,
+      "text": "x = 5",
+      "is_correct": false
+    }
+  },
+  
+  {
+    "model": "quiz.question",
+    "pk": 12,
+    "fields": {
+      "quiz": 3,
+      "question_type": "multiple_choice",
+      "text": "<p>What is the value of y in the equation y = 2x + 3 when x = 4?</p>",
+      "explanation": "<p>To find y, substitute x = 4 into the equation: y = 2(4) + 3 = 8 + 3 = 11.</p>",
+      "created_at": "2024-06-01T12:10:00Z",
+      "updated_at": "2024-06-01T12:10:00Z"
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 37,
+    "fields": {
+      "question": 12,
+      "text": "y = 7",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 38,
+    "fields": {
+      "question": 12,
+      "text": "y = 9",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 39,
+    "fields": {
+      "question": 12,
+      "text": "y = 11",
+      "is_correct": true
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 40,
+    "fields": {
+      "question": 12,
+      "text": "y = 14",
+      "is_correct": false
+    }
+  },
+  
+  {
+    "model": "quiz.question",
+    "pk": 13,
+    "fields": {
+      "quiz": 3,
+      "question_type": "true_false",
+      "text": "<p>The equation y = mx + b represents a linear function, where m is the slope and b is the y-intercept.</p>",
+      "explanation": "<p>This statement is true. In the slope-intercept form of a linear equation (y = mx + b), m represents the slope of the line and b represents the y-intercept (the point where the line crosses the y-axis).</p>",
+      "created_at": "2024-06-01T12:15:00Z",
+      "updated_at": "2024-06-01T12:15:00Z"
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 41,
+    "fields": {
+      "question": 13,
+      "text": "True",
+      "is_correct": true
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 42,
+    "fields": {
+      "question": 13,
+      "text": "False",
+      "is_correct": false
+    }
+  },
+  
+  {
+    "model": "quiz.question",
+    "pk": 14,
+    "fields": {
+      "quiz": 3,
+      "question_type": "multiple_choice",
+      "text": "<p>Simplify the expression: 3(2x - 4) + 5x</p>",
+      "explanation": "<p>First, distribute the 3: 3(2x - 4) = 6x - 12. Then add 5x: 6x - 12 + 5x = 11x - 12.</p>",
+      "created_at": "2024-06-01T12:20:00Z",
+      "updated_at": "2024-06-01T12:20:00Z"
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 43,
+    "fields": {
+      "question": 14,
+      "text": "11x - 12",
+      "is_correct": true
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 44,
+    "fields": {
+      "question": 14,
+      "text": "11x - 4",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 45,
+    "fields": {
+      "question": 14,
+      "text": "6x + 5x - 4",
+      "is_correct": false
+    }
+  },
+  {
+    "model": "quiz.answer",
+    "pk": 46,
+    "fields": {
+      "question": 14,
+      "text": "11x + 12",
+      "is_correct": false
+    }
+  },
+  
+  {
+    "model": "quiz.question",
+    "pk": 15,
+    "fields": {
+      "quiz": 3,
+      "question_type": "essay",
+      "text": "<p>Explain how to solve a system of two linear equations using the substitution method. Provide an example.</p>",
+      "explanation": "<p>The substitution method involves solving for one variable in terms of the other from one equation, then substituting that expression into the second equation to solve for the remaining variable.</p>",
+      "created_at": "2024-06-01T12:25:00Z",
+      "updated_at": "2024-06-01T12:25:00Z"
+    }
+  },
+  {
+    "model": "quiz.essayquestion",
+    "pk": 2,
+    "fields": {
+      "question": 15,
+      "answer": "The substitution method for solving a system of linear equations involves these steps:\n\n1. Solve one of the equations for one variable in terms of the other.\n2. Substitute this expression into the other equation.\n3. Solve the resulting equation for the remaining variable.\n4. Substitute the value back to find the other variable.\n\nExample:\nLet's solve the system:\nx + y = 5\n2x - y = 4\n\nStep 1: Solve the first equation for y: y = 5 - x\nStep 2: Substitute into the second equation: 2x - (5 - x) = 4\nStep 3: Simplify and solve: 2x - 5 + x = 4\n                           3x - 5 = 4\n                           3x = 9\n                           x = 3\nStep 4: Substitute x = 3 into y = 5 - x: y = 5 - 3 = 2\n\nThe solution is (3, 2)."
+    }
+  }
+]

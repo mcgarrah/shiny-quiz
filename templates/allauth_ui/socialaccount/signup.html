@@ -1,0 +1,57 @@
+{% extends "allauth_ui/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Social Sign Up" %} - Shiny Quiz{% endblock %}
+
+{% block auth_header_title %}{% trans "Social Sign Up" %}{% endblock %}
+{% block auth_header_subtitle %}{% trans "You are about to use your social account to login. Please complete your profile information." %}{% endblock %}
+
+{% block auth_content %}
+  <form class="signup" id="signup_form" method="post" action="{% url 'socialaccount_signup' %}">
+    {% csrf_token %}
+    
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {% for error in form.non_field_errors %}
+          {{ error }}
+        {% endfor %}
+      </div>
+    {% endif %}
+    
+    <div class="mb-3">
+      <label for="id_username" class="form-label">{% trans "Username" %}</label>
+      <input type="text" name="username" placeholder="{% trans 'Username' %}" 
+             class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+             id="id_username" required value="{{ form.username.value|default:'' }}">
+      {% if form.username.errors %}
+        <div class="invalid-feedback">
+          {% for error in form.username.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+    
+    <div class="mb-3">
+      <label for="id_email" class="form-label">{% trans "Email" %}</label>
+      <input type="email" name="email" placeholder="{% trans 'Email' %}" 
+             class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+             id="id_email" required value="{{ form.email.value|default:'' }}">
+      {% if form.email.errors %}
+        <div class="invalid-feedback">
+          {% for error in form.email.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+    
+    {% if redirect_field_value %}
+      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+    {% endif %}
+    
+    <div class="d-grid gap-2 mt-4">
+      <button class="btn btn-primary" type="submit">{% trans "Sign Up" %}</button>
+    </div>
+  </form>
+{% endblock %}

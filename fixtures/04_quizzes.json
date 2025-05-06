@@ -1,0 +1,117 @@
+[
+  {
+    "model": "quiz.quiz",
+    "pk": 1,
+    "fields": {
+      "title": "Python Basics",
+      "slug": "python-basics",
+      "description": "<p>Test your knowledge of Python programming fundamentals.</p>",
+      "category": 1,
+      "created_by": 1,
+      "created_at": "2024-06-01T10:00:00Z",
+      "updated_at": "2024-06-01T10:00:00Z",
+      "random_order": true,
+      "max_questions": 5,
+      "answers_at_end": false,
+      "exam_paper": true,
+      "single_attempt": false,
+      "pass_mark": 70.0,
+      "success_text": "<p>Congratulations! You've passed the Python Basics quiz.</p>",
+      "fail_text": "<p>You didn't pass this time. Keep learning and try again!</p>",
+      "draft": false,
+      "time_limit": 10
+    }
+  },
+  {
+    "model": "quiz.quiz",
+    "pk": 2,
+    "fields": {
+      "title": "Basic Physics",
+      "slug": "basic-physics",
+      "description": "<p>A quiz covering fundamental concepts in physics including Newton's laws, energy, and simple mechanics.</p>",
+      "category": 2,
+      "created_by": 2,
+      "created_at": "2024-06-01T11:00:00Z",
+      "updated_at": "2024-06-01T11:00:00Z",
+      "random_order": false,
+      "max_questions": 0,
+      "answers_at_end": true,
+      "exam_paper": false,
+      "single_attempt": false,
+      "pass_mark": 60.0,
+      "success_text": "<p>Great job! You've demonstrated a good understanding of basic physics concepts.</p>",
+      "fail_text": "<p>You need to review the basic physics concepts. Try again after studying!</p>",
+      "draft": false,
+      "time_limit": 15
+    }
+  },
+  {
+    "model": "quiz.quiz",
+    "pk": 3,
+    "fields": {
+      "title": "Algebra Fundamentals",
+      "slug": "algebra-fundamentals",
+      "description": "<p>Test your knowledge of basic algebraic concepts, equations, and problem-solving techniques.</p>",
+      "category": 3,
+      "created_by": 2,
+      "created_at": "2024-06-01T12:00:00Z",
+      "updated_at": "2024-06-01T12:00:00Z",
+      "random_order": true,
+      "max_questions": 10,
+      "answers_at_end": true,
+      "exam_paper": false,
+      "single_attempt": true,
+      "pass_mark": 75.0,
+      "success_text": "<p>Excellent! You've mastered the fundamentals of algebra.</p>",
+      "fail_text": "<p>You need more practice with algebraic concepts. Review and try again!</p>",
+      "draft": false,
+      "time_limit": 20
+    }
+  },
+  {
+    "model": "quiz.quiz",
+    "pk": 4,
+    "fields": {
+      "title": "World War II",
+      "slug": "world-war-ii",
+      "description": "<p>A comprehensive quiz about the events, figures, and impact of World War II.</p>",
+      "category": 4,
+      "created_by": 1,
+      "created_at": "2024-06-01T13:00:00Z",
+      "updated_at": "2024-06-01T13:00:00Z",
+      "random_order": false,
+      "max_questions": 0,
+      "answers_at_end": false,
+      "exam_paper": true,
+      "single_attempt": false,
+      "pass_mark": 65.0,
+      "success_text": "<p>Well done! You have a good grasp of World War II history.</p>",
+      "fail_text": "<p>You should review World War II history. Try again after studying!</p>",
+      "draft": false,
+      "time_limit": 25
+    }
+  },
+  {
+    "model": "quiz.quiz",
+    "pk": 5,
+    "fields": {
+      "title": "General Knowledge Challenge",
+      "slug": "general-knowledge-challenge",
+      "description": "<p>Test your knowledge across a variety of topics in this general knowledge quiz.</p>",
+      "category": 5,
+      "created_by": 1,
+      "created_at": "2024-06-01T14:00:00Z",
+      "updated_at": "2024-06-01T14:00:00Z",
+      "random_order": true,
+      "max_questions": 15,
+      "answers_at_end": true,
+      "exam_paper": false,
+      "single_attempt": false,
+      "pass_mark": 50.0,
+      "success_text": "<p>Great job! You have a wide range of knowledge.</p>",
+      "fail_text": "<p>Keep learning and expanding your knowledge. Try again soon!</p>",
+      "draft": false,
+      "time_limit": 30
+    }
+  }
+]

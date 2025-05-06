@@ -1,0 +1,8 @@
+{% comment %}
+Template filter to access dictionary items by key
+Usage: {{ dictionary|get_item:key }}
+{% endcomment %}
+
+{% if dictionary and key in dictionary %}
+    {{ dictionary|get_item:key }}
+{% endif %}

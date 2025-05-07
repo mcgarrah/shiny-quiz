@@ -45,12 +45,12 @@ class Category(models.Model):
         return 0
 
 class Quiz(models.Model):
-    title = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255, unique=True, blank=True)
+    title = models.CharField(max_length=255, db_index=True)  # Index for searching by title
+    slug = models.SlugField(max_length=255, unique=True, blank=True, db_index=True)  # Already indexed by unique=True
     description = CKEditor5Field(blank=True, config_name='extends')
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='quizzes')
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_quizzes')
-    created_at = models.DateTimeField(auto_now_add=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='quizzes', db_index=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_quizzes', db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)  # Index for sorting by creation date
     updated_at = models.DateTimeField(auto_now=True)
     
     # Quiz settings
@@ -62,7 +62,7 @@ class Quiz(models.Model):
     pass_mark = models.FloatField(default=50, help_text="Percentage required to pass")
     success_text = CKEditor5Field(blank=True, config_name='default', help_text="Displayed if user passes")
     fail_text = CKEditor5Field(blank=True, config_name='default', help_text="Displayed if user fails")
-    draft = models.BooleanField(default=False, help_text="If yes, quiz is not displayed in the quiz list")
+    draft = models.BooleanField(default=False, db_index=True, help_text="If yes, quiz is not displayed in the quiz list")  # Index for filtering published quizzes
     time_limit = models.IntegerField(default=0, help_text="Time limit in minutes (0 = no limit)")
     
     class Meta:
@@ -108,8 +108,8 @@ class Question(models.Model):
         ('essay', 'Essay'),
     )
     
-    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='questions')
-    question_type = models.CharField(max_length=20, choices=QUESTION_TYPE_CHOICES, default='multiple_choice')
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='questions', db_index=True)
+    question_type = models.CharField(max_length=20, choices=QUESTION_TYPE_CHOICES, default='multiple_choice', db_index=True)  # Index for filtering by question type
     text = CKEditor5Field(config_name='extends')
     explanation = CKEditor5Field(blank=True, config_name='default', help_text="Explanation shown after question is answered")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -156,9 +156,9 @@ class Answer(models.Model):
     """
     Answer model for multiple choice and true/false questions
     """
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers', db_index=True)
     text = models.CharField(max_length=255)
-    is_correct = models.BooleanField(default=False)
+    is_correct = models.BooleanField(default=False, db_index=True)  # Index for filtering correct answers
     
     def __str__(self):
         return f"{self.text} ({'Correct' if self.is_correct else 'Incorrect'})"
@@ -167,15 +167,15 @@ class Sitting(models.Model):
     """
     Records a user's progress through a quiz
     """
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='quiz_sittings')
-    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='sittings')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='quiz_sittings', db_index=True)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='sittings', db_index=True)
     question_order = JSONField(default=list)
     question_list = JSONField(default=list)
     incorrect_questions = JSONField(default=list)
     current_score = models.IntegerField(default=0)
-    complete = models.BooleanField(default=False)
+    complete = models.BooleanField(default=False, db_index=True)  # Index for filtering complete/incomplete sittings
     user_answers = JSONField(default=dict)
-    start_time = models.DateTimeField(auto_now_add=True)
+    start_time = models.DateTimeField(auto_now_add=True, db_index=True)  # Index for time-based queries
     end_time = models.DateTimeField(null=True, blank=True)
     
     class Meta:
@@ -310,16 +310,19 @@ class Progress(models.Model):
     """
     Tracks user progress across quizzes and categories
     """
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='quiz_progress')
-    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='progress')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='quiz_progress', db_index=True)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='progress', db_index=True)
     score = models.IntegerField(default=0)
     total_questions = models.IntegerField(default=0)
     correct_answers = models.IntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)  # Index for time-based queries
     
     class Meta:
         verbose_name_plural = "Progress Records"
         unique_together = ['user', 'quiz']
+        indexes = [
+            models.Index(fields=['user', 'quiz']),  # Composite index for the common query pattern
+        ]
     
     def __str__(self):
         return f"{self.user.username} - {self.quiz.title}"
@@ -355,10 +358,10 @@ class EssayAnswer(models.Model):
     """
     Model for storing user's essay answers
     """
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='essay_answers')
-    sitting = models.ForeignKey(Sitting, on_delete=models.CASCADE, related_name='essay_answers')
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='essay_answers', db_index=True)
+    sitting = models.ForeignKey(Sitting, on_delete=models.CASCADE, related_name='essay_answers', db_index=True)
     answer = models.TextField(blank=True)
-    is_correct = models.BooleanField(null=True, blank=True)
+    is_correct = models.BooleanField(null=True, blank=True, db_index=True)  # Index for filtering marked/unmarked essays
     comments = models.TextField(blank=True)
     
     def __str__(self):

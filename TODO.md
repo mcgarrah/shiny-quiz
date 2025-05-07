@@ -107,3 +107,43 @@ coverage>=7.2.5
   ~~Recommendation: Use database-agnostic migrations and add defensive programming for JSONField access~~
 
 4. Dark mode does show the text on the tiles for the Quizzes, Categories and other places. The text is too dark.
+
+5. ~~Missing Index on Foreign Keys~~ ✅ Added indexes to all foreign keys and frequently queried fields
+
+  ~~Issue: High-traffic tables like Progress and Sitting don't have explicit database indexes on foreign keys.~~
+  ~~Recommendation: Add indexes to improve query performance~~
+
+6. Potential Race Conditions
+ 
+  Issue: The add_user_answer method in the Sitting model updates fields and then saves, which could lead to race conditions in concurrent environments.
+  Recommendation: Use F() expressions or transactions
+
+7. Missing Pagination in API Views
+
+  Issue: Some views that could return large datasets (like quiz_list) implement pagination, but others don't.
+  Recommendation: Consistently apply pagination to all list views that could grow large.
+
+8. Inconsistent Error Handling
+
+  Issue: Error handling is inconsistent across views. Some use messages.error() while others just redirect.
+  Recommendation: Standardize error handling approach across all views.
+
+9. Missing Form Validation
+
+  Issue: Some views process form data directly from request.POST without proper validation.
+  Recommendation: Use Django forms for all data processing to ensure proper validation.
+
+10. Missing Cache Implementation
+
+  Issue: No caching strategy is implemented, which could impact performance for frequently accessed data.
+  Recommendation: Add Django's caching framework for views like category listings and quiz details.
+
+11. Missing Documentation
+
+  Issue: Code documentation is minimal, making it harder for new developers to understand the codebase.
+  Recommendation: Add docstrings to all models, views, and complex methods explaining their purpose and usage.
+
+12. Potential Timezone Issues
+
+  Issue: Time-related calculations (like quiz time limits) don't explicitly handle timezone differences.
+  Recommendation: Ensure all datetime operations use Django's timezone-aware functions consistently.

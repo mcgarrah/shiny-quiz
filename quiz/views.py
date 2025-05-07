@@ -46,8 +46,14 @@ def quiz_list(request):
     })
 
 def category_list(request):
-    """View to list all categories"""
-    categories = Category.objects.all()
+    """View to list all categories with pagination"""
+    # Get all categories
+    all_categories = Category.objects.all().order_by('name')
+    
+    # Pagination
+    paginator = Paginator(all_categories, 12)  # Show 12 categories per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     
     # Get user progress for each category if user is authenticated
     if request.user.is_authenticated:
@@ -71,7 +77,7 @@ def category_list(request):
         progress_by_quiz = {p.quiz_id: p for p in progress_records}
         
         # Calculate progress for each category
-        for category in categories:
+        for category in page_obj:
             total_questions = 0
             correct_answers = 0
             
@@ -92,13 +98,18 @@ def category_list(request):
                 category.progress = 0
     
     return render(request, 'quiz/category_list.html', {
-        'categories': categories
+        'page_obj': page_obj,
     })
 
 def category_detail(request, category_id):
-    """View to show category details and quizzes"""
+    """View to show category details and quizzes with pagination"""
     category = get_object_or_404(Category, id=category_id)
-    quizzes = Quiz.objects.filter(category=category, draft=False)
+    all_quizzes = Quiz.objects.filter(category=category, draft=False).order_by('-created_at')
+    
+    # Pagination
+    paginator = Paginator(all_quizzes, 9)  # Show 9 quizzes per page (3x3 grid)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     
     # Get user progress for each quiz if user is authenticated
     if request.user.is_authenticated:
@@ -107,7 +118,7 @@ def category_detail(request, category_id):
         progress_dict = {}
         progress_records = Progress.objects.filter(
             user=request.user,
-            quiz__in=quizzes
+            quiz__in=page_obj
         ).select_related('quiz')
         
         # Create a dictionary mapping quiz IDs to their progress records
@@ -115,7 +126,7 @@ def category_detail(request, category_id):
             progress_dict[progress.quiz_id] = progress
         
         # Annotate quizzes with progress information
-        for quiz in quizzes:
+        for quiz in page_obj:
             if quiz.id in progress_dict:
                 progress = progress_dict[quiz.id]
                 quiz.user_progress = progress.get_percent_correct()
@@ -126,7 +137,7 @@ def category_detail(request, category_id):
     
     return render(request, 'quiz/category_detail.html', {
         'category': category,
-        'quizzes': quizzes
+        'page_obj': page_obj
     })
 
 def quiz_detail(request, slug):
@@ -326,23 +337,34 @@ def quiz_results(request, sitting_id):
 
 @login_required
 def progress_view(request):
-    """View to show user progress across all quizzes"""
+    """View to show user progress across all quizzes with pagination"""
     # Use select_related to fetch quiz and category in a single query
-    user_progress = Progress.objects.filter(user=request.user).select_related(
+    all_user_progress = Progress.objects.filter(user=request.user).select_related(
         'quiz', 'quiz__category'
     ).order_by('-created_at')
     
+    # Pagination for progress records
+    progress_paginator = Paginator(all_user_progress, 10)  # Show 10 progress records per page
+    progress_page = request.GET.get('progress_page')
+    progress_page_obj = progress_paginator.get_page(progress_page)
+    
     # Group progress by category to avoid nested loops
     progress_by_category = {}
-    for progress in user_progress:
+    for progress in all_user_progress:  # Use all progress for category stats
         category_id = progress.quiz.category_id
         if category_id not in progress_by_category:
             progress_by_category[category_id] = []
         progress_by_category[category_id].append(progress)
     
     # Get all categories and annotate with progress data
-    categories = Category.objects.all()
-    for category in categories:
+    all_categories = Category.objects.all()
+    
+    # Pagination for categories
+    category_paginator = Paginator(all_categories, 6)  # Show 6 categories per page
+    category_page = request.GET.get('category_page')
+    category_page_obj = category_paginator.get_page(category_page)
+    
+    for category in category_page_obj:
         category_progress = progress_by_category.get(category.id, [])
         
         category.quizzes_taken = len(category_progress)
@@ -356,8 +378,9 @@ def progress_view(request):
             category.success_rate = 0
     
     return render(request, 'quiz/progress.html', {
-        'user_progress': user_progress,
-        'categories': categories
+        'progress_page_obj': progress_page_obj,
+        'category_page_obj': category_page_obj,
+        'total_quizzes_taken': all_user_progress.count(),  # For summary stats
     })
 
 @permission_required('quiz.view_sittings')

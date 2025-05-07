@@ -45,6 +45,7 @@
 * Add quiz import/export functionality
 * Implement quiz sharing via social media
 * Add quiz leaderboards
+* Add the `django-debug-toolbar`
 
 ## Areas for Improvement
 
@@ -113,10 +114,10 @@ coverage>=7.2.5
   ~~Issue: High-traffic tables like Progress and Sitting don't have explicit database indexes on foreign keys.~~
   ~~Recommendation: Add indexes to improve query performance~~
 
-6. Potential Race Conditions
+6. ~~Potential Race Conditions~~ ✅ Fixed with transactions and F() expressions
  
-  Issue: The add_user_answer method in the Sitting model updates fields and then saves, which could lead to race conditions in concurrent environments.
-  Recommendation: Use F() expressions or transactions
+  ~~Issue: The add_user_answer method in the Sitting model updates fields and then saves, which could lead to race conditions in concurrent environments.~~
+  ~~Recommendation: Use F() expressions or transactions~~
 
 7. Missing Pagination in API Views
 
@@ -147,3 +148,8 @@ coverage>=7.2.5
 
   Issue: Time-related calculations (like quiz time limits) don't explicitly handle timezone differences.
   Recommendation: Ensure all datetime operations use Django's timezone-aware functions consistently.
+
+13. Redundant Database Queries
+
+  Issue: Despite optimizations, there are still some views that could benefit from further query reduction.
+  Recommendation: Use Django Debug Toolbar to identify remaining N+1 query issues and optimize them.

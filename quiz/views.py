@@ -267,20 +267,27 @@ def take_quiz(request, slug):
 
 def complete_quiz(request, sitting):
     """Complete the quiz and show results"""
-    if not sitting.complete:
-        sitting.mark_quiz_complete()
-        
-        # Update progress
-        total_questions = sitting.get_total_questions()
-        progress, created = Progress.objects.get_or_create(
-            user=sitting.user,
-            quiz=sitting.quiz
-        )
-        progress.update_score(
-            sitting.current_score,
-            total_questions,
-            sitting.current_score
-        )
+    from django.db import transaction
+    
+    # Use a transaction to ensure atomicity of the entire operation
+    with transaction.atomic():
+        if not sitting.complete:
+            # Mark the quiz as complete (this uses its own transaction internally)
+            sitting.mark_quiz_complete()
+            
+            # Update progress
+            total_questions = sitting.get_total_questions()
+            progress, created = Progress.objects.get_or_create(
+                user=sitting.user,
+                quiz=sitting.quiz
+            )
+            
+            # Update the score (this uses its own transaction internally)
+            progress.update_score(
+                sitting.current_score,
+                total_questions,
+                sitting.current_score
+            )
     
     return redirect('quiz:quiz_results', sitting_id=sitting.id)
 
@@ -392,26 +399,41 @@ def marking_list(request):
 @permission_required('quiz.view_sittings')
 def mark_essay(request, essay_answer_id):
     """View to mark an essay answer"""
+    from django.db import transaction
+    from django.db.models import F
+    
     essay_answer = get_object_or_404(EssayAnswer, id=essay_answer_id)
     
     if request.method == 'POST':
         is_correct = request.POST.get('is_correct') == 'true'
         comments = request.POST.get('comments', '')
         
-        essay_answer.is_correct = is_correct
-        essay_answer.comments = comments
-        essay_answer.save()
-        
-        # Update sitting score if answer is correct
-        if is_correct:
-            sitting = essay_answer.sitting
-            sitting.current_score += 1
-            sitting.save()
+        # Use a transaction to ensure atomicity of the entire operation
+        with transaction.atomic():
+            # Lock the essay answer for update
+            essay_answer = EssayAnswer.objects.select_for_update().get(id=essay_answer_id)
             
-            # Update progress
-            progress = Progress.objects.get(user=sitting.user, quiz=sitting.quiz)
-            progress.correct_answers += 1
-            progress.save()
+            # Update essay answer
+            essay_answer.is_correct = is_correct
+            essay_answer.comments = comments
+            essay_answer.save()
+            
+            # Update sitting score if answer is correct
+            if is_correct:
+                sitting = Sitting.objects.select_for_update().get(id=essay_answer.sitting_id)
+                
+                # Use F() expression for atomic increment
+                Sitting.objects.filter(id=sitting.id).update(
+                    current_score=F('current_score') + 1
+                )
+                
+                # Update progress using F() expression for atomic increment
+                Progress.objects.filter(
+                    user=sitting.user, 
+                    quiz=sitting.quiz
+                ).update(
+                    correct_answers=F('correct_answers') + 1
+                )
         
         messages.success(request, "Essay answer marked successfully.")
         return redirect('quiz:marking_list')

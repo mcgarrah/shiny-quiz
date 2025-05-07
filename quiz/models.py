@@ -197,48 +197,77 @@ class Sitting(models.Model):
     def mark_quiz_complete(self):
         """
         Marks the quiz as complete and sets the end time
+        using a transaction to prevent race conditions
         """
-        self.complete = True
-        self.end_time = timezone.now()
-        self.save()
+        from django.db import transaction
+        
+        # Use a transaction to ensure atomicity
+        with transaction.atomic():
+            # Get a fresh instance with a select_for_update lock to prevent race conditions
+            sitting = Sitting.objects.select_for_update().get(pk=self.pk)
+            
+            # Update the sitting
+            sitting.complete = True
+            sitting.end_time = timezone.now()
+            sitting.save()
+            
+            # Refresh this instance from the database
+            self.refresh_from_db()
+            
+        return True
     
     def add_user_answer(self, question, answer=None):
         """
-        Adds a user answer to the sitting
+        Adds a user answer to the sitting using database transactions
+        to prevent race conditions in concurrent environments
         """
-        try:
+        from django.db import transaction
+        from django.db.models import F
+        
+        # Use a transaction to ensure atomicity
+        with transaction.atomic():
+            # Get a fresh instance with a select_for_update lock to prevent race conditions
+            sitting = Sitting.objects.select_for_update().get(pk=self.pk)
+            
             # Initialize user_answers if it's None
-            if self.user_answers is None:
-                self.user_answers = {}
-                
+            if sitting.user_answers is None:
+                sitting.user_answers = {}
+            
             # Store the answer in the user_answers dictionary
             question_id = str(question.id)
             if answer:
-                self.user_answers[question_id] = answer.id
+                sitting.user_answers[question_id] = answer.id
             else:
-                self.user_answers[question_id] = None
+                sitting.user_answers[question_id] = None
             
             # Initialize incorrect_questions if it's None
-            if self.incorrect_questions is None:
-                self.incorrect_questions = []
-                
-            # Update score and incorrect questions list
-            if question.check_if_correct(answer) is True:
-                self.current_score += 1
-            else:
-                if question.id not in self.incorrect_questions:
-                    self.incorrect_questions.append(question.id)
+            if sitting.incorrect_questions is None:
+                sitting.incorrect_questions = []
             
-            self.save()
-        except (AttributeError, TypeError) as e:
-            # Log the error (in a real application, use proper logging)
-            print(f"Error adding user answer: {e}")
-            # Initialize fields if they're None
-            if self.user_answers is None:
-                self.user_answers = {}
-            if self.incorrect_questions is None:
-                self.incorrect_questions = []
-            self.save()
+            # Check if the answer is correct
+            is_correct = question.check_if_correct(answer)
+            
+            # Update score using F() expression for atomic update
+            if is_correct is True:
+                # Use F() expression for atomic increment
+                Sitting.objects.filter(pk=self.pk).update(
+                    current_score=F('current_score') + 1
+                )
+                # Update the instance's score to match the database
+                sitting.current_score += 1
+            else:
+                # Add to incorrect questions if not already there
+                if question.id not in sitting.incorrect_questions:
+                    sitting.incorrect_questions.append(question.id)
+            
+            # Save the updated sitting
+            sitting.save()
+            
+            # Refresh this instance from the database to ensure consistency
+            self.refresh_from_db()
+            
+        # Return whether the answer was correct (useful for the view)
+        return is_correct
     
     def get_total_questions(self):
         """
@@ -330,11 +359,25 @@ class Progress(models.Model):
     def update_score(self, score, total, correct):
         """
         Updates the user's score for this quiz
+        using a transaction to prevent race conditions
         """
-        self.score = score
-        self.total_questions = total
-        self.correct_answers = correct
-        self.save()
+        from django.db import transaction
+        
+        # Use a transaction to ensure atomicity
+        with transaction.atomic():
+            # Get a fresh instance with a select_for_update lock to prevent race conditions
+            progress = Progress.objects.select_for_update().get(pk=self.pk)
+            
+            # Update the progress
+            progress.score = score
+            progress.total_questions = total
+            progress.correct_answers = correct
+            progress.save()
+            
+            # Refresh this instance from the database
+            self.refresh_from_db()
+            
+        return True
     
     def get_percent_correct(self):
         """

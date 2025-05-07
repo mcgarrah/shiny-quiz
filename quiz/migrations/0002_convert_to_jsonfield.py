@@ -6,36 +6,69 @@ def convert_text_to_json(apps, schema_editor):
     for sitting in Sitting.objects.all():
         # Convert question_list from comma-separated string to list
         if sitting.question_list:
-            sitting.question_list_json = [int(q_id) for q_id in sitting.question_list.split(',') if q_id]
+            try:
+                sitting.question_list_json = [int(q_id) for q_id in sitting.question_list.split(',') if q_id]
+            except (ValueError, TypeError):
+                sitting.question_list_json = []
         else:
             sitting.question_list_json = []
             
         # Convert question_order from comma-separated string to list
         if sitting.question_order:
-            sitting.question_order_json = [int(q_id) for q_id in sitting.question_order.split(',') if q_id]
+            try:
+                sitting.question_order_json = [int(q_id) for q_id in sitting.question_order.split(',') if q_id]
+            except (ValueError, TypeError):
+                sitting.question_order_json = []
         else:
             sitting.question_order_json = []
             
         # Convert incorrect_questions from comma-separated string to list
         if sitting.incorrect_questions:
-            sitting.incorrect_questions_json = [int(q_id) for q_id in sitting.incorrect_questions.split(',') if q_id]
+            try:
+                sitting.incorrect_questions_json = [int(q_id) for q_id in sitting.incorrect_questions.split(',') if q_id]
+            except (ValueError, TypeError):
+                sitting.incorrect_questions_json = []
         else:
             sitting.incorrect_questions_json = []
             
         # Convert user_answers from comma-separated string to dict
         user_answers_dict = {}
         if sitting.user_answers:
-            for answer in sitting.user_answers.split(','):
-                if not answer:
-                    continue
-                
-                question_id, answer_id = answer.split(':')
-                if answer_id:
-                    user_answers_dict[question_id] = int(answer_id)
-                else:
-                    user_answers_dict[question_id] = None
+            try:
+                for answer in sitting.user_answers.split(','):
+                    if not answer:
+                        continue
+                    
+                    parts = answer.split(':')
+                    if len(parts) != 2:
+                        continue
+                        
+                    question_id, answer_id = parts
+                    if answer_id:
+                        try:
+                            user_answers_dict[str(question_id)] = int(answer_id)
+                        except ValueError:
+                            user_answers_dict[str(question_id)] = None
+                    else:
+                        user_answers_dict[str(question_id)] = None
+            except Exception:
+                # If any error occurs, use an empty dict
+                user_answers_dict = {}
         
         sitting.user_answers_json = user_answers_dict
+        sitting.save()
+
+def copy_json_data(apps, schema_editor):
+    """
+    Copy data from temporary JSON fields to the final fields
+    using Django's ORM for database agnosticism
+    """
+    Sitting = apps.get_model('quiz', 'Sitting')
+    for sitting in Sitting.objects.all():
+        sitting.question_list = sitting.question_list_json
+        sitting.question_order = sitting.question_order_json
+        sitting.incorrect_questions = sitting.incorrect_questions_json
+        sitting.user_answers = sitting.user_answers_json
         sitting.save()
 
 def convert_json_to_text(apps, schema_editor):
@@ -133,9 +166,10 @@ class Migration(migrations.Migration):
             field=JSONField(default=dict),
         ),
         
-        # Copy data from temporary fields to new fields
-        migrations.RunSQL(
-            "UPDATE quiz_sitting SET question_list = question_list_json, question_order = question_order_json, incorrect_questions = incorrect_questions_json, user_answers = user_answers_json"
+        # Copy data from temporary fields to new fields using Django ORM
+        migrations.RunPython(
+            code=copy_json_data,
+            reverse_code=lambda apps, schema_editor: None
         ),
         
         # Remove temporary fields

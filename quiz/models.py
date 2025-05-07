@@ -206,45 +206,99 @@ class Sitting(models.Model):
         """
         Adds a user answer to the sitting
         """
-        # Store the answer in the user_answers dictionary
-        if answer:
-            self.user_answers[str(question.id)] = answer.id
-        else:
-            self.user_answers[str(question.id)] = None
-        
-        # Update score and incorrect questions list
-        if question.check_if_correct(answer) is True:
-            self.current_score += 1
-        else:
-            if question.id not in self.incorrect_questions:
-                self.incorrect_questions.append(question.id)
-        
-        self.save()
+        try:
+            # Initialize user_answers if it's None
+            if self.user_answers is None:
+                self.user_answers = {}
+                
+            # Store the answer in the user_answers dictionary
+            question_id = str(question.id)
+            if answer:
+                self.user_answers[question_id] = answer.id
+            else:
+                self.user_answers[question_id] = None
+            
+            # Initialize incorrect_questions if it's None
+            if self.incorrect_questions is None:
+                self.incorrect_questions = []
+                
+            # Update score and incorrect questions list
+            if question.check_if_correct(answer) is True:
+                self.current_score += 1
+            else:
+                if question.id not in self.incorrect_questions:
+                    self.incorrect_questions.append(question.id)
+            
+            self.save()
+        except (AttributeError, TypeError) as e:
+            # Log the error (in a real application, use proper logging)
+            print(f"Error adding user answer: {e}")
+            # Initialize fields if they're None
+            if self.user_answers is None:
+                self.user_answers = {}
+            if self.incorrect_questions is None:
+                self.incorrect_questions = []
+            self.save()
     
     def get_total_questions(self):
         """
         Returns the total number of questions in this sitting
         """
-        return len(self.question_list)
+        try:
+            # Ensure question_list is a valid list
+            if self.question_list is None:
+                return 0
+            return len(self.question_list)
+        except (TypeError, ValueError):
+            # Handle case where question_list is not a valid list
+            return 0
     
     def get_questions(self):
         """
         Returns the list of questions for this sitting
         """
-        return Question.objects.filter(id__in=self.question_list)
+        try:
+            # Ensure question_list is a valid list of IDs
+            if not self.question_list:
+                return Question.objects.none()
+                
+            # Filter questions by ID
+            return Question.objects.filter(id__in=self.question_list)
+        except (TypeError, ValueError):
+            # Handle case where question_list is not a valid list
+            return Question.objects.none()
     
     def get_incorrect_questions(self):
         """
         Returns the list of incorrect questions
         """
-        return Question.objects.filter(id__in=self.incorrect_questions)
+        try:
+            # Ensure incorrect_questions is a valid list of IDs
+            if not self.incorrect_questions:
+                return Question.objects.none()
+                
+            # Filter questions by ID
+            return Question.objects.filter(id__in=self.incorrect_questions)
+        except (TypeError, ValueError):
+            # Handle case where incorrect_questions is not a valid list
+            return Question.objects.none()
     
     def get_user_answers(self):
         """
         Returns a dictionary of user answers
         """
-        # Convert string keys to integers for consistency with previous implementation
-        return {int(k): v for k, v in self.user_answers.items()}
+        if not self.user_answers:
+            return {}
+            
+        try:
+            # Convert string keys to integers and ensure values are properly typed
+            return {
+                int(k): (int(v) if v is not None else None) 
+                for k, v in self.user_answers.items()
+            }
+        except (ValueError, TypeError, AttributeError):
+            # Handle any conversion errors
+            return {}
     
     def is_passed(self):
         """

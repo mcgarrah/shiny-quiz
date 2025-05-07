@@ -63,8 +63,8 @@ coverage>=7.2.5
   * Interactive features: Adding HTMX for more interactive quiz experiences is mentioned in the TODO list.
 * Social features: Add the planned Quiz sharing and leaderboards but not yet implemented.
 * Consider performance optimizations: As the application grows, database query optimization might be needed, especially for quiz results and progress tracking.
-* Complete documentation: Add API documentation if applicable and more detailed developer guides.
 * Set up CI/CD: Implement continuous integration and deployment pipelines as mentioned in the TODO.
+* Complete documentation: Add API documentation if applicable and more detailed developer guides.
 * Add REST API Endpoints with Django REST Framework using `djangorestframework` which enables:
   * Modile app integration
   * Third-party integrations
@@ -101,4 +101,9 @@ coverage>=7.2.5
   ~~Issue: In category_detail view, there's a loop with database queries~~
   ~~Recommendation: Use prefetch_related or select_related to reduce database hits~~
 
+3. ~~JSONField Implementation Issues~~ ✅ Fixed with improved error handling and database-agnostic migrations
 
+  ~~Issue: The migration strategy for JSONField used direct SQL, and there was limited error handling for JSONField access~~
+  ~~Recommendation: Use database-agnostic migrations and add defensive programming for JSONField access~~
+
+4. Dark mode does show the text on the tiles for the Quizzes, Categories and other places. The text is too dark.

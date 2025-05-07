@@ -1,0 +1,210 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Django",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "runserver"
+            ],
+            "django": true,
+            "justMyCode": true,
+            "env": {
+                "PYTHONUNBUFFERED": "1"
+            }
+        },
+        {
+            "name": "Python: Django Shell",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "shell"
+            ],
+            "django": true,
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Django Tests",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "test"
+            ],
+            "django": true,
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Django Makemigrations",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "makemigrations"
+            ],
+            "django": true,
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Django Migrate",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "migrate"
+            ],
+            "django": true,
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Django Collect Static",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "collectstatic",
+                "--noinput"
+            ],
+            "django": true,
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Django Create Superuser",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "createsuperuser"
+            ],
+            "django": true,
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Generate Password Hashes",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/generate_password_hashes.py",
+            "args": [
+                "--update"
+            ],
+            "justMyCode": true,
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Generate Password Hashes (Show Only)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/generate_password_hashes.py",
+            "justMyCode": true,
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Setup Sample Data (Generate Hashes + Load All)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/setup_sample_data.py",
+            "justMyCode": true,
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Django LoadData",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "loaddata",
+                "fixtures/01_users.json",
+                "fixtures/02_user_profiles.json",
+                "fixtures/03_categories.json",
+                "fixtures/04_quizzes.json",
+                "fixtures/05_questions_python.json",
+                "fixtures/06_questions_physics.json",
+                "fixtures/07_questions_algebra.json",
+                "fixtures/08_questions_history.json",
+                "fixtures/09_questions_general.json",
+                "fixtures/10_progress.json"
+            ],
+            "django": true,
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Django LoadData - Users",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "loaddata",
+                "fixtures/01_users.json"
+            ],
+            "django": true,
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Django LoadData - User Profiles",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "loaddata",
+                "fixtures/02_user_profiles.json"
+            ],
+            "django": true,
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Django LoadData - Categories",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "loaddata",
+                "fixtures/03_categories.json"
+            ],
+            "django": true,
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Django LoadData - Quizzes",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "loaddata",
+                "fixtures/04_quizzes.json"
+            ],
+            "django": true,
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Django LoadData - Questions (All)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "loaddata",
+                "fixtures/05_questions_python.json",
+                "fixtures/06_questions_physics.json",
+                "fixtures/07_questions_algebra.json",
+                "fixtures/08_questions_history.json",
+                "fixtures/09_questions_general.json"
+            ],
+            "django": true,
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Django LoadData - Progress",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": [
+                "loaddata",
+                "fixtures/10_progress.json"
+            ],
+            "django": true,
+            "justMyCode": true
+        }
+    ]
+}

@@ -2,8 +2,8 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Django",
-            "type": "python",
+            "name": "Python: Django RunServer",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/manage.py",
             "args": [
@@ -16,8 +16,53 @@
             }
         },
         {
+            "name": "Python: Django Gunicorn",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/.venv/bin/gunicorn",
+            "django": true,
+            "env": {
+                "DJANGO_DEBUG": "True",
+                "DJANGO_ALLOWED_HOSTS": "*",
+                //"DATABASE_URI": "postgresql+psycopg2://<USERNAME>:<PASSWORD>@<SERVER>/<DATABASE>?sslmode=require"
+                //"DATABASE_URI": "sqlite:///product.db"
+                //"DJANGO_SETTINGS_MODULE": "shiny_shop.settings",
+                "DJANGO_SECRET_KEY": "your-django-secret-key"
+            },
+            "args": [
+                "shiny_quiz.wsgi:application",
+                "--reload",
+                "--threads=1",
+                "--workers=1"
+                // "--log-level info",
+                // "--log-file - ",
+                // "--access-logfile -"
+            ],
+            //"preLaunchTask": "Run Pre-Debug Script",
+            "autoStartBrowser": false
+        },
+        {
+            "name": "Python: Django Gunicorn (DO-AP)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/.venv/bin/gunicorn",
+            "django": true,
+            "env": {
+                "DJANGO_DEBUG": "True",
+                "DJANGO_ALLOWED_HOSTS": "*",
+                "DJANGO_SETTINGS_MODULE": "shiny_quiz.settings",
+                "DJANGO_SECRET_KEY": "your-django-secret-key"
+            },
+            "args": [
+                "shiny_quiz.wsgi:application",
+                "--log-file - ",
+                "--access-logfile -"
+            ],
+            "autoStartBrowser": false
+        },
+        {
             "name": "Python: Django Shell",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/manage.py",
             "args": [
@@ -28,7 +73,7 @@
         },
         {
             "name": "Python: Django Tests",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/manage.py",
             "args": [
@@ -39,7 +84,7 @@
         },
         {
             "name": "Python: Django Makemigrations",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/manage.py",
             "args": [
@@ -50,7 +95,7 @@
         },
         {
             "name": "Python: Django Migrate",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/manage.py",
             "args": [
@@ -61,7 +106,7 @@
         },
         {
             "name": "Python: Django Collect Static",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/manage.py",
             "args": [
@@ -73,7 +118,7 @@
         },
         {
             "name": "Python: Django Create Superuser",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/manage.py",
             "args": [
@@ -84,7 +129,7 @@
         },
         {
             "name": "Python: Generate Password Hashes",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/scripts/generate_password_hashes.py",
             "args": [
@@ -95,7 +140,7 @@
         },
         {
             "name": "Python: Generate Password Hashes (Show Only)",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/scripts/generate_password_hashes.py",
             "justMyCode": true,
@@ -103,7 +148,7 @@
         },
         {
             "name": "Python: Setup Sample Data (Generate Hashes + Load All)",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/scripts/setup_sample_data.py",
             "justMyCode": true,
@@ -111,7 +156,7 @@
         },
         {
             "name": "Python: Django LoadData",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/manage.py",
             "args": [
@@ -132,7 +177,7 @@
         },
         {
             "name": "Python: Django LoadData - Users",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/manage.py",
             "args": [
@@ -144,7 +189,7 @@
         },
         {
             "name": "Python: Django LoadData - User Profiles",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/manage.py",
             "args": [
@@ -156,7 +201,7 @@
         },
         {
             "name": "Python: Django LoadData - Categories",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/manage.py",
             "args": [
@@ -168,7 +213,7 @@
         },
         {
             "name": "Python: Django LoadData - Quizzes",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/manage.py",
             "args": [
@@ -180,7 +225,7 @@
         },
         {
             "name": "Python: Django LoadData - Questions (All)",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/manage.py",
             "args": [
@@ -196,7 +241,7 @@
         },
         {
             "name": "Python: Django LoadData - Progress",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/manage.py",
             "args": [

@@ -25,6 +25,9 @@
   * ~~Custom pass/fail messages~~ ✅
   * ~~Essay question marking system~~ ✅
 * ~~convert from django-ckeditor to django-ckeditor-5~~ ✅ Updated models, settings, and URLs to use the modern CKEditor 5
+* Add the /about and /contact back to the top level template.
+* Fix the "home" or / to stop it from HTTP 500 under gunicorn
+
 
 ## Additional Tasks
 

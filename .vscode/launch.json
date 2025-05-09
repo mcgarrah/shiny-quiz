@@ -22,12 +22,12 @@
             "program": "${workspaceFolder}/.venv/bin/gunicorn",
             "django": true,
             "env": {
-                "DJANGO_DEBUG": "True",
-                "DJANGO_ALLOWED_HOSTS": "*",
+                "DJANGO_ALLOWED_HOSTS": "*"
+                //"DJANGO_DEBUG": "True",
                 //"DATABASE_URI": "postgresql+psycopg2://<USERNAME>:<PASSWORD>@<SERVER>/<DATABASE>?sslmode=require"
                 //"DATABASE_URI": "sqlite:///product.db"
                 //"DJANGO_SETTINGS_MODULE": "shiny_shop.settings",
-                "DJANGO_SECRET_KEY": "your-django-secret-key"
+                //"DJANGO_SECRET_KEY": "your-django-secret-key"
             },
             "args": [
                 "shiny_quiz.wsgi:application",
@@ -48,17 +48,29 @@
             "program": "${workspaceFolder}/.venv/bin/gunicorn",
             "django": true,
             "env": {
-                "DJANGO_DEBUG": "True",
                 "DJANGO_ALLOWED_HOSTS": "*",
-                "DJANGO_SETTINGS_MODULE": "shiny_quiz.settings",
-                "DJANGO_SECRET_KEY": "your-django-secret-key"
+                "DJANGO_DEBUG": "True",
+                // "DJANGO_SETTINGS_MODULE": "shiny_quiz.settings",
+                // "DJANGO_SECRET_KEY": "your-django-secret-key"
             },
             "args": [
                 "shiny_quiz.wsgi:application",
-                "--log-file - ",
-                "--access-logfile -"
+                "--log-level", "debug",
+                "--log-file", "-",
+                "--access-logfile", "-"
             ],
             "autoStartBrowser": false
+        },
+        {
+            "name": "Python: Install Requirements",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pip",
+            "args": [
+                "install",
+                "-r",
+                "requirements.txt"
+            ]
         },
         {
             "name": "Python: Django Shell",

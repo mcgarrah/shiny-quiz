@@ -3,7 +3,7 @@
     "model": "auth.user",
     "pk": 1,
     "fields": {
-      "password": "pbkdf2_sha256$720000$admin",
+      "password": "pbkdf2_sha256$1000000$6Uy62CQvwe0Tudn6RjM3WO$J6HE/5302lXQygEB20gVUPKU9PreQ3Tiop71hSM2EUE=",
       "last_login": "2024-06-01T12:00:00Z",
       "is_superuser": true,
       "username": "admin",
@@ -21,7 +21,7 @@
     "model": "auth.user",
     "pk": 2,
     "fields": {
-      "password": "pbkdf2_sha256$720000$teacher",
+      "password": "pbkdf2_sha256$1000000$57OSUzvCzy95mrXHtk5EtT$LyC90pRt9b/xoO2mUMbyZRCDNMGBWMrUHMUAo4moflw=",
       "last_login": "2024-06-01T12:00:00Z",
       "is_superuser": false,
       "username": "teacher",
@@ -39,7 +39,7 @@
     "model": "auth.user",
     "pk": 3,
     "fields": {
-      "password": "pbkdf2_sha256$720000$student",
+      "password": "pbkdf2_sha256$1000000$zphkye32WYR4MT3DPXAfzq$whz5Z/6WBoBQUULOlURIEiN+isit94VkbC+EIBQa5o4=",
       "last_login": "2024-06-01T12:00:00Z",
       "is_superuser": false,
       "username": "student",

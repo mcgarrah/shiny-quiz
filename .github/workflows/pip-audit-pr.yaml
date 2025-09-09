@@ -31,7 +31,7 @@ jobs:
       id: audit
       # Run pip-audit directly with --fix flag
       run: |
-        pip-audit --fix --require-hashes -r requirements.txt || echo "exit_code=$?" >> $GITHUB_OUTPUT
+        pip-audit --fix -r requirements.txt || echo "exit_code=$?" >> $GITHUB_OUTPUT
       # The `continue-on-error` ensures the workflow continues to the next step
       # if a vulnerability was found and fixed, which triggers the non-zero exit code.
       continue-on-error: true

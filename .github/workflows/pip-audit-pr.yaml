@@ -24,21 +24,30 @@ jobs:
       # This step installs the dependencies found in your requirements.txt
       run: pip install -r requirements.txt
 
+    - name: Install pip-audit
+      run: pip install pip-audit
+
     - name: Perform pip-audit with fixes
       id: audit
-      # Use the official action to run pip-audit.
-      # The '--fix' flag applies available patches and exits with a non-zero code if changes were made.
-      uses: pypa/gh-action-pip-audit@v1.0.0
-      with:
-        inputs: 'requirements.txt'
-        args: '--fix'
+      # Run pip-audit directly with --fix flag
+      run: |
+        pip-audit --fix --require-hashes --output=json --desc requirements.txt > audit-results.json || echo "exit_code=$?" >> $GITHUB_OUTPUT
       # The `continue-on-error` ensures the workflow continues to the next step
       # if a vulnerability was found and fixed, which triggers the non-zero exit code.
       continue-on-error: true
 
+    - name: Check for changes
+      id: changes
+      run: |
+        if git diff --quiet; then
+          echo "has_changes=false" >> $GITHUB_OUTPUT
+        else
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+        fi
+
     - name: Create Pull Request with fix
       # This step only runs if pip-audit made changes
-      if: steps.audit.outputs.exit-code == '1'
+      if: steps.changes.outputs.has_changes == 'true'
       uses: peter-evans/create-pull-request@v6
       continue-on-error: true
       with:

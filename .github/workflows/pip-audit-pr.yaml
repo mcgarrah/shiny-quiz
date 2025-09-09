@@ -20,21 +20,41 @@ jobs:
       with:
         python-version: '3.x'
 
+    - name: Create virtual environment
+      run: python -m venv .venv
+
     - name: Install dependencies for audit
-      # This step installs the dependencies found in your requirements.txt
-      run: pip install -r requirements.txt
+      run: |
+        source .venv/bin/activate
+        pip install -r requirements.txt
+
+    - name: Pin requirements to exact versions
+      run: |
+        source .venv/bin/activate
+        python scripts/pin_requirements.py pin
 
     - name: Install pip-audit
-      run: pip install pip-audit
+      run: |
+        source .venv/bin/activate
+        pip install pip-audit
 
     - name: Perform pip-audit with fixes
       id: audit
-      # Run pip-audit directly with --fix flag
+      # Run pip-audit directly with --fix flag on pinned requirements
       run: |
-        pip-audit --fix -r requirements.txt || echo "exit_code=$?" >> $GITHUB_OUTPUT
+        source .venv/bin/activate
+        pip-audit --fix --require-hashes -r requirements-pinned.txt || echo "exit_code=$?" >> $GITHUB_OUTPUT
       # The `continue-on-error` ensures the workflow continues to the next step
       # if a vulnerability was found and fixed, which triggers the non-zero exit code.
       continue-on-error: true
+
+    - name: Convert fixed pinned requirements back to flexible versioning
+      run: |
+        source .venv/bin/activate
+        # Copy the fixed pinned requirements back to main requirements file
+        cp requirements-pinned.txt requirements.txt
+        # Convert back to flexible versioning
+        python scripts/pin_requirements.py unpin
 
     - name: Check for changes
       id: changes

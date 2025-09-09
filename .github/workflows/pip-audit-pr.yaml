@@ -44,6 +44,10 @@ jobs:
       run: |
         source .venv/bin/activate
         pip-audit --fix -r requirements-pinned.txt || echo "exit_code=$?" >> $GITHUB_OUTPUT
+        # Copy the potentially updated pinned requirements back to main requirements file
+        cp requirements-pinned.txt requirements.txt
+        # Remove the defunct pinned requirements file
+        rm requirements-pinned.txt
       # The `continue-on-error` ensures the workflow continues to the next step
       # if a vulnerability was found and fixed, which triggers the non-zero exit code.
       continue-on-error: true
@@ -51,9 +55,7 @@ jobs:
     - name: Convert fixed pinned requirements back to flexible versioning
       run: |
         source .venv/bin/activate
-        # Copy the fixed pinned requirements back to main requirements file
-        cp requirements-pinned.txt requirements.txt
-        # Convert back to flexible versioning
+        # Convert requirements back to flexible versioning
         python scripts/pin_requirements.py unpin
 
     - name: Check for changes

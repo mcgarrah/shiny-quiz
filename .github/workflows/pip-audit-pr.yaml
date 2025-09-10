@@ -7,6 +7,10 @@ on:
   # Allows manual runs from the Actions tab
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   pip-audit-fixes:
     runs-on: ubuntu-latest

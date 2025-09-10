@@ -54,7 +54,7 @@ jobs:
       # Run pip-audit directly with --fix flag on pinned requirements
       run: |
         source .venv/bin/activate
-        pip-audit --fix -r requirements-pinned.txt || echo "exit_code=$?" >> $GITHUB_OUTPUT
+        pip-audit --fix -o audit-output.txt -r requirements-pinned.txt || echo "exit_code=$?" >> $GITHUB_OUTPUT
         # Copy the potentially updated pinned requirements back to main requirements file
         cp requirements-pinned.txt requirements.txt
         # Remove the defunct pinned requirements file
@@ -78,6 +78,18 @@ jobs:
           echo "has_changes=true" >> $GITHUB_OUTPUT
         fi
 
+    - name: Read audit output
+      id: audit_output
+      if: steps.changes.outputs.has_changes == 'true'
+      run: |
+        if [ -f audit-output.txt ]; then
+          echo "audit_details<<EOF" >> $GITHUB_OUTPUT
+          cat audit-output.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+        else
+          echo "audit_details=No audit output file found" >> $GITHUB_OUTPUT
+        fi
+
     - name: Create Pull Request with fix
       # This step only runs if pip-audit made changes
       if: steps.changes.outputs.has_changes == 'true'
@@ -94,8 +106,15 @@ jobs:
           ---
           
           **Audit Results:**
-          Exit Code: ${{ steps.audit.outputs.exit_code }}
           Changes Detected: ${{ steps.changes.outputs.has_changes }}
+          Exit Code: ${{ steps.audit.outputs.exit_code }}
+          
+          **Audit Details:**
+          ```
+          ${{ steps.audit_output.outputs.audit_details }}
+          ```
+          
+          ---
                     
         branch: 'automated-pip-audit-fixes'
         # Ensures a clean branch for the PR

@@ -86,6 +86,7 @@ jobs:
           echo "audit_details<<EOF" >> $GITHUB_OUTPUT
           cat audit-output.txt >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+          rm audit-output.txt
         else
           echo "audit_details=No audit output file found" >> $GITHUB_OUTPUT
         fi

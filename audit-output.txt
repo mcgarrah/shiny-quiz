@@ -1,0 +1,5 @@
+Name   Version ID                  Fix Versions        Applied Fix
+------ ------- ------------------- ------------------- -------------------------------------------
+django 5.2     PYSEC-2025-37       4.2.21,5.1.9,5.2.1  Successfully upgraded django (5.2 => 5.2.6)
+django 5.2     PYSEC-2025-47       4.2.22,5.1.10,5.2.2 Successfully upgraded django (5.2 => 5.2.6)
+django 5.2     GHSA-6w2r-r2m5-xq5w 4.2.24,5.1.12,5.2.6 Successfully upgraded django (5.2 => 5.2.6)

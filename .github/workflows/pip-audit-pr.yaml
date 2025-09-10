@@ -99,6 +99,11 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         commit-message: 'fix: Apply security fixes via pip-audit'
+        commit-body: |
+          Automated security fixes applied by pip-audit workflow.
+          
+          Audit Details:
+          ${{ steps.audit_output.outputs.audit_details }}
         title: 'Security updates from pip-audit'
         body: |
           This PR automatically applies security fixes found by `pip-audit`.

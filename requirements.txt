@@ -1,4 +1,4 @@
-django>=5.2.6
+django>=5.2.7
 django-allauth>=65.8.0
 django-allauth-ui>=1.7.1
 django-bootstrap5>=25.1

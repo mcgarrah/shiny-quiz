@@ -101,7 +101,7 @@ jobs:
     - name: Create Pull Request with fix
       # This step only runs if pip-audit made changes
       if: steps.changes.outputs.has_changes == 'true'
-      uses: peter-evans/create-pull-request@v6
+      uses: peter-evans/create-pull-request@v8
       continue-on-error: true
       with:
         token: ${{ secrets.GITHUB_TOKEN }}

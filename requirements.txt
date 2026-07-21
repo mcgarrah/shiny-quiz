@@ -9,5 +9,5 @@ python-dotenv>=1.2.2
 pillow>=12.3.0
 psycopg2-binary>=2.9.12
 dj-database-url>=3.1.2
-requests>=2.33.0
+requests>=2.34.2
 jwt>=1.4.0

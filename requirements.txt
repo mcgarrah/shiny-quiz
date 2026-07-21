@@ -1,5 +1,5 @@
 django>=5.2.16
-django-allauth>=65.14.1
+django-allauth>=65.18.0
 django-allauth-ui>=1.8.1
 django-bootstrap5>=25.1
 django-ckeditor-5>=0.2.20
